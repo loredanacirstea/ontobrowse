@@ -18,7 +18,7 @@
         
         //perform the request
         var req = ocpu.rpc("ontobrowse", {
-          myname : myname
+          onto : myname
         }, function(output){
           $("#output").text(output.message);
         });
