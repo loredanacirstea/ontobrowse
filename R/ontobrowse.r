@@ -12,7 +12,6 @@ ontobrowse <- function(onto=""){
     list( message = "Write a package!" )
   }
   else {
-    message = paste(onto, ", write a package!", "")
-    list( message )
+    list( message = paste(onto, ", write a package!") )
   }
 }
