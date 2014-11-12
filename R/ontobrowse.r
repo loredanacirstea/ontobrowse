@@ -106,6 +106,7 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
     text = paste(text, as.character(terms[terms$term_id == sibs[length(sibs)] & terms$lang == lang, "term"]), "(id:", sibs[length(sibs)], ")", "\n")
   }
   #print(text)
-  list( message = text )
+  #list( message = text )
+  list( message = "Submitted!" )
 
 }
