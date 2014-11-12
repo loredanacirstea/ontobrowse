@@ -7,11 +7,12 @@
 #' @examples
 #' ontobrowse()
 #' 
-ontobrowse <- function(onto=TRUE){
-  if(onto==TRUE){
-    print("Write a package!")
+ontobrowse <- function(onto=""){
+  if(onto==""){
+    list("Write a package!")
   }
   else {
-    print("Lore, write a package!")
+    message = paste(onto, ", write a package!", "")
+    list(message)
   }
 }
