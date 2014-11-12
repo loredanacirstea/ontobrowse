@@ -1,5 +1,5 @@
 Package: ontobrowse
-Title: What the package does (one line)
+Title: Test package (one line)
 Version: 0.1
 Authors@R: "First Last <first.last@example.com> [aut, cre]"
 Description: What the package does (one paragraph)
