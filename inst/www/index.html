@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Hello</title>
+    <title>Ontobrowse</title>
     
     <!-- Include order: first jquery, then opencpu.js, and then your code -->
     <script src="opencpu/jquery-1.10.2.min.js"></script>
@@ -14,11 +14,15 @@
         $("#submitbutton").attr("disabled", "disabled");
         
         //read the value for 'myname'
-        var onto = $("#namefield").val();
+        var id = $("#idfield").val();
+        var lang = $("#langfield").val();
+        var orig = $("#origfield").val();
         
         //perform the request
         var req = ocpu.rpc("ontobrowse", {
-          onto : onto
+          term : id
+          lang: lang
+          origin: orig
         }, function(output){
           $("#output").text(output.message);
         });
@@ -38,7 +42,7 @@
     
     <style>
       #output{
-        height: 80px;
+        height: 500px;
         width: 500px;
         border: 1px solid gray;
         padding: 3px;
@@ -48,10 +52,12 @@
   </head>
     
   <body>
-    <h1>Hello, world!</h1>
+    <h1>Browse you ontology!</h1>
     
-    <b>Your name: </b> <input type="text" id="namefield">
-    
+    <b>Term id: </b> <input type="text" id="idfield"></br>
+    <b>Language: </b> <input type="text" id="langfield"></br>
+    <b>Origin: </b> <input type="text" id="origfield"></br>
+
     <button id="submitbutton" type="button">Submit to server!</button>
     
     <p id="output"></p>
