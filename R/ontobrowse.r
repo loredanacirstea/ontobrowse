@@ -68,42 +68,44 @@ siblings <- function(terms, rels, term, lang, returnIds = TRUE) {
 #' 
 ontobrowse <- function(term=9000, lang="la", origin = 9000){
   #install.packages("RCurl");
-  library(RCurl);
-  x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv");
-  terms <- read.csv(text = x);
-  y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv");
-  rels <- read.csv(text = y);
+  library(RCurl)
+  x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
+  terms <- read.csv(text = x)
+  y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
+  rels <- read.csv(text = y)
 
+  term = as.integer(term)
+  origin = as.integer(origin)
   text = paste("Ancestry: ", "\n");
-  parents <- ancestry(terms, rels, term, lang, origin);
+  parents <- ancestry(terms, rels, term, lang, origin)
   if(length(parents) == 0){
-    text = paste(text, "No hierarchical path available in your loaded data frame.", "\n");
+    text = paste(text, "No hierarchical path available in your loaded data frame.", "\n")
   }
   else {
     for(i in length(parents):2) {
-      text = paste(text, as.character(terms[terms$term_id == parents[i] & terms$lang == lang, "term"]), "(id: ", parents[i], ")", " -> ");
+      text = paste(text, as.character(terms[terms$term_id == parents[i] & terms$lang == lang, "term"]), "(id: ", parents[i], ")", " -> ")
     }
-    text = paste(text, as.character(terms[terms$term_id == parents[1] & terms$lang == lang, "term"]), "(id: ", parents[1], ")", "\n");
+    text = paste(text, as.character(terms[terms$term_id == parents[1] & terms$lang == lang, "term"]), "(id: ", parents[1], ")", "\n")
   }
   text = paste(text, "Children:", "\n");
-  kids <- children(terms, rels, term, lang);
-  if(length(kids) == 0) { text = paste(text, "No children.", "\n");}
+  kids <- children(terms, rels, term, lang)
+  if(length(kids) == 0) { text = paste(text, "No children.", "\n") }
   else {
     for(i in 1:(length(kids)-1)){
-      text = paste(text, as.character(terms[terms$term_id == kids[i] & terms$lang == lang, "term"]), "(id:", kids[i], "); ");
+      text = paste(text, as.character(terms[terms$term_id == kids[i] & terms$lang == lang, "term"]), "(id:", kids[i], "); ")
     }
-    text = paste(text, as.character(terms[terms$term_id == kids[length(kids)] & terms$lang == lang, "term"]), "(id:", kids[length(kids)], ")", "\n");
+    text = paste(text, as.character(terms[terms$term_id == kids[length(kids)] & terms$lang == lang, "term"]), "(id:", kids[length(kids)], ")", "\n")
   }
-  text = paste(text, "Siblings: ", "\n");
-  sibs <- siblings(terms, rels, term, lang);
-  if(length(sibs) == 1 || length(sibs) == 0) { text = paste(text, "No siblings.", "\n");}
+  text = paste(text, "Siblings: ", "\n")
+  sibs <- siblings(terms, rels, term, lang)
+  if(length(sibs) == 1 || length(sibs) == 0) { text = paste(text, "No siblings.", "\n") }
   else {
     for(i in 1:(length(sibs)-1)){
-      text = paste(text, as.character(terms[terms$term_id == sibs[i] & terms$lang == lang, "term"]), "(id:", sibs[i], "); ");
+      text = paste(text, as.character(terms[terms$term_id == sibs[i] & terms$lang == lang, "term"]), "(id:", sibs[i], "); ")
     }
-    text = paste(text, as.character(terms[terms$term_id == sibs[length(sibs)] & terms$lang == lang, "term"]), "(id:", sibs[length(sibs)], ")", "\n");
+    text = paste(text, as.character(terms[terms$term_id == sibs[length(sibs)] & terms$lang == lang, "term"]), "(id:", sibs[length(sibs)], ")", "\n")
   }
-  #print(text);
+  #print(text)
   list( message = text )
 
 }
