@@ -94,8 +94,9 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
           for(i in 1:(length(kids)-1)){
             text = paste(text, as.character(terms[terms$term_id == kids[i] & terms$lang == lang, "term"]), "(id:", kids[i], "); ")
           }
-    text = paste(text, as.character(terms[terms$term_id == kids[length(kids)] & terms$lang == lang, "term"]), "(id:", kids[length(kids)], ")", "\n")
   }
+  text = paste(text, as.character(terms[terms$term_id == kids[length(kids)] & terms$lang == lang, "term"]), "(id:", kids[length(kids)], ")", "\n")
+  
   text = paste(text, "Siblings: ", "\n")
   sibs <- siblings(terms, rels, term, lang)
   if(length(sibs) == 1 || length(sibs) == 0) { text = paste(text, "No siblings.", "\n") }
