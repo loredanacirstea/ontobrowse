@@ -14,15 +14,15 @@
         $("#submitbutton").attr("disabled", "disabled");
         
         //read the value for 'myname'
-        var id = $("#idfield").val();
+        var term = $("#idfield").val();
         var lang = $("#langfield").val();
-        var orig = $("#origfield").val();
+        var origin = $("#origfield").val();
         
         //perform the request
         var req = ocpu.rpc("ontobrowse", {
-          term : id
+          term : term
           lang: lang
-          origin: orig
+          origin: origin
         }, function(output){
           $("#output").text(output.message);
         });
@@ -42,7 +42,7 @@
     
     <style>
       #output{
-        height: 500px;
+        height: 400px;
         width: 500px;
         border: 1px solid gray;
         padding: 3px;
