@@ -67,7 +67,8 @@ siblings <- function(terms, rels, term, lang, returnIds = TRUE) {
 #' ontobrowse()
 #' 
 ontobrowse <- function(term=9000, lang="la", origin = 9000){
-  install.packages("RCurl");
+  list(message = "Yes")
+  install.packages("RCurl")
   library(RCurl)
   x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
   terms <- read.csv(text = x)
@@ -106,6 +107,6 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
     text = paste(text, as.character(terms[terms$term_id == sibs[length(sibs)] & terms$lang == lang, "term"]), "(id:", sibs[length(sibs)], ")", "\n")
   }
   #print(text)
-  list( message = text )
+  #list( message = text )
 
 }
