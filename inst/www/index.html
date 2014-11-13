@@ -21,8 +21,8 @@
         //perform the request
         var req = ocpu.rpc("ontobrowse", {
           term : term
-          lang: lang
-          origin: origin
+          lang : lang
+          origin : origin
         }, function(output){
           $("#output").text(output.message);
         });
