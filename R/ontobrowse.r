@@ -37,7 +37,7 @@ children <- function(terms, rels, term, lang, returnIds = TRUE) {
   }
   kidsIds = rels[rels$term2 == termId & rels$relation == 1,"term1"];
   if(returnIds == TRUE) {
-    return(kidsIds);
+    result <- kidsIds;
   }
   else {
     kids = c();
@@ -46,8 +46,9 @@ children <- function(terms, rels, term, lang, returnIds = TRUE) {
       termN <- termN[!is.na(termN)][1];
       kids = c(kids, termN);
     }
-    return(kids);
+    result <- kidsdebug()
   }
+  return(result)
 }
 siblings <- function(terms, rels, term, lang, returnIds = TRUE) {
   if(returnIds == TRUE) { sibs <- children(terms, rels, rels[rels$term1 == term, "term2"]);}
@@ -89,10 +90,10 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
   text = paste(text, "Children:", "\n");
   kids <- children(terms, rels, term, lang)
   if(length(kids) == 0) { text = paste(text, "No children.", "\n") }
-  else {
-    for(i in 1:(length(kids)-1)){
-      text = paste(text, as.character(terms[terms$term_id == kids[i] & terms$lang == lang, "term"]), "(id:", kids[i], "); ")
-    }
+  else if(length(kids) > 1) {
+          for(i in 1:(length(kids)-1)){
+            text = paste(text, as.character(terms[terms$term_id == kids[i] & terms$lang == lang, "term"]), "(id:", kids[i], "); ")
+          }
     text = paste(text, as.character(terms[terms$term_id == kids[length(kids)] & terms$lang == lang, "term"]), "(id:", kids[length(kids)], ")", "\n")
   }
   text = paste(text, "Siblings: ", "\n")
