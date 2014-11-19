@@ -1,3 +1,8 @@
+library(RCurl)
+x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
+terms <- read.csv(text = x)
+y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
+rels <- read.csv(text = y)
 ancestry <- function(terms, rels, term, lang, origin, returnIds = TRUE) {
   if(class(term) == "numeric" || class(term) == "integer") {
     termId = term;
@@ -56,7 +61,7 @@ siblings <- function(terms, rels, term, lang, returnIds = TRUE) {
   return(sibs);
 }
 
-#' Ontobrowse helps you browse your ontology
+#' Browse helps you browse an ontology by id
 #'
 #' This function allows you browse an ontology by id.
 #' @param term Give a term_id. Defaults to 9000 (Terminologia Morphologica).
@@ -65,35 +70,45 @@ siblings <- function(terms, rels, term, lang, returnIds = TRUE) {
 #' @keywords ontology
 #' @export
 #' @examples
-#' ontobrowse()
+#' browse()
 #' 
-ontobrowse <- function(term=9000, lang="la", origin = 9000){
-  library(RCurl)
-  x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
-  terms <- read.csv(text = x)
-  y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
-  rels <- read.csv(text = y)
-
+browse <- function(term=9000, lang="la", origin = 9000){
   term = as.integer(term)
   origin = as.integer(origin)
-  text = paste("Ancestry: ", "\n");
+  text = paste("Ancestry: ", "\n")
+  list <- list()
+  list[["id"]] <- term
+  list[["ancestry"]] <- list()
+  list[["children"]] <- list()
+  list[["siblings"]] <- list()
   parents <- ancestry(terms, rels, term, lang, origin)
   if(length(parents) == 0){
     text = paste(text, "No hierarchical path available in your loaded data frame.", "\n")
   }
   else {
     for(i in length(parents):2) {
-      text = paste(text, as.character(terms[terms$term_id == parents[i] & terms$lang == lang, "term"]), "(id: ", parents[i], ")", " -> ")
+      name <- as.character(terms[terms$term_id == parents[i] & terms$lang == lang, "term"])
+      text = paste(text, name, "(id: ", parents[i], ")", " -> ")
+      temp <- c()
+      temp["id"] <- parents[i]
+      temp["name"] <- name
+      list[["ancestry"]][[i-1]] <- temp
     }
     text = paste(text, as.character(terms[terms$term_id == parents[1] & terms$lang == lang, "term"]), "(id: ", parents[1], ")", "\n")
+    list[["name"]] <- as.character(terms[terms$term_id == parents[1] & terms$lang == lang, "term"])
   }
   text = paste(text, "Children:", "\n");
   kids <- children(terms, rels, term, lang)
   if(length(kids) == 0) { text = paste(text, "No children.", "\n") }
   else if(length(kids) > 1) {
-          for(i in 1:(length(kids)-1)){
-            text = paste(text, as.character(terms[terms$term_id == kids[i] & terms$lang == lang, "term"]), "(id:", kids[i], "); ")
-          }
+    for(i in 1:(length(kids)-1)){
+      name <- as.character(terms[terms$term_id == kids[i] & terms$lang == lang, "term"])
+      text = paste(text, name, "(id:", kids[i], "); ")
+      temp <- c()
+      temp["id"] <- kids[i]
+      temp["name"] <- name
+      list[["children"]][[i]] <- temp
+    }
   }
   text = paste(text, as.character(terms[terms$term_id == kids[length(kids)] & terms$lang == lang, "term"]), "(id:", kids[length(kids)], ")", "\n")
   
@@ -102,11 +117,22 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
   if(length(sibs) == 1 || length(sibs) == 0) { text = paste(text, "No siblings.", "\n") }
   else {
     for(i in 1:(length(sibs)-1)){
-      text = paste(text, as.character(terms[terms$term_id == sibs[i] & terms$lang == lang, "term"]), "(id:", sibs[i], "); ")
+      name <- as.character(terms[terms$term_id == sibs[i] & terms$lang == lang, "term"])
+      text = paste(text, name, "(id:", sibs[i], "); ")
+      temp <- c()
+      temp["id"] <- sibs[i]
+      temp["name"] <- name
+      list[["siblings"]][[i]] <- temp
     }
-    text = paste(text, as.character(terms[terms$term_id == sibs[length(sibs)] & terms$lang == lang, "term"]), "(id:", sibs[length(sibs)], ")", "\n")
+    name <- as.character(terms[terms$term_id == sibs[length(sibs)] & terms$lang == lang, "term"])
+    text = paste(text, name, "(id:", sibs[length(sibs)], ")", "\n")
+    temp <- c()
+    temp["id"] <- sibs[length(sibs)]
+    temp["name"] <- name
+    list[["siblings"]][[length(sibs)]] <- temp
   }
   #print(text)
-  list( message = text )
-
+  #list( message = text )
+  list
+  
 }

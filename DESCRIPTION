@@ -1,7 +1,7 @@
 Package: ontobrowse
 Title: Ontobrowse - ontology management for R (one line)
 Version: 0.1
-Authors@R: "Loredana Cirstea <loedana.cirstea@gmail.com> [aut, cre]"
+Authors@R: "Loredana Cirstea <loredana.cirstea@gmail.com> [aut, cre]"
 Description: For the moment, it browses terminologies (one paragraph)
 Depends:
     R (>= 3.1.0)
