@@ -134,5 +134,5 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
   }
   #print(text)
   #list( message = text )
-  list
+  list(message = list)
 }
