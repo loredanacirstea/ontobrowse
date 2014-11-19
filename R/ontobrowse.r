@@ -79,6 +79,7 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
   text = paste("Ancestry: ", "\n")
   list <- list()
   list[["id"]] <- term
+  list[["name"]] <- as.character(terms[terms$term_id == term & terms$lang == lang, "term"])
   list[["ancestry"]] <- list()
   list[["children"]] <- list()
   list[["siblings"]] <- list()
@@ -96,7 +97,6 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
       list[["ancestry"]][[i-1]] <- temp
     }
     text = paste(text, as.character(terms[terms$term_id == parents[1] & terms$lang == lang, "term"]), "(id: ", parents[1], ")", "\n")
-    list[["name"]] <- as.character(terms[terms$term_id == parents[1] & terms$lang == lang, "term"])
   }
   text = paste(text, "Children:", "\n");
   kids <- children(terms, rels, term, lang)
