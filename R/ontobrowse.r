@@ -61,7 +61,8 @@ siblings <- function(terms, rels, term, lang, returnIds = TRUE) {
   return(sibs);
 }
 
-#' Browse helps you browse an ontology by id
+
+#' Ontobrowse helps you browse your ontology
 #'
 #' This function allows you browse an ontology by id.
 #' @param term Give a term_id. Defaults to 9000 (Terminologia Morphologica).
@@ -70,9 +71,9 @@ siblings <- function(terms, rels, term, lang, returnIds = TRUE) {
 #' @keywords ontology
 #' @export
 #' @examples
-#' browse()
+#' ontobrowse()
 #' 
-browse <- function(term=9000, lang="la", origin = 9000){
+ontobrowse <- function(term=9000, lang="la", origin = 9000){
   term = as.integer(term)
   origin = as.integer(origin)
   text = paste("Ancestry: ", "\n")
@@ -134,5 +135,4 @@ browse <- function(term=9000, lang="la", origin = 9000){
   #print(text)
   #list( message = text )
   list
-  
 }
