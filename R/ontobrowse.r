@@ -99,7 +99,7 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
       temp <- c()
       temp["id"] <- kids[i]
       temp["name"] <- name
-      temp["haschildren"] <- (length(children(terms, rels, kids[i], lang))>1)
+      temp["haschildren"] <- (length(children(terms, rels, kids[i], lang))>0)
       list[["children"]][[i]] <- temp
     }
   }
