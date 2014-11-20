@@ -17,7 +17,7 @@ ancestry <- function(terms, rels, term, lang, origin, returnIds = TRUE) {
   }
   id = termId;
   while((id != origin) == TRUE) {
-    parent = rels[rels$term1 == id & rels$relation == 1,"term2"];
+    parent = rels[rels$term1 == id & rels$relation == 1,"term2"][1];
     path = c(path, parent);
     id = parent;
   }
@@ -78,20 +78,20 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
   origin = as.integer(origin)
   list <- list()
   list[["id"]] <- term
-  list[["name"]] <- as.character(terms[terms$term_id == term & terms$lang == lang, "term"])
-  list[["ancestry"]] <- list()
+  list[["name"]] <- as.character(terms[terms$term_id == term & terms$lang == lang, "term"])[1]
+  #list[["ancestry"]] <- list()
   list[["children"]] <- list()
   list[["siblings"]] <- list()
-  parents <- ancestry(terms, rels, term, lang, origin)
-  if(length(parents) > 0){
-    for(i in length(parents):2) {
-      name <- as.character(terms[terms$term_id == parents[i] & terms$lang == lang, "term"])
-      temp <- c()
-      temp["id"] <- parents[i]
-      temp["name"] <- name
-      list[["ancestry"]][[i-1]] <- temp
-    }
-  }
+#   parents <- ancestry(terms, rels, term, lang, origin)
+#   if(length(parents) > 0){
+#     for(i in length(parents):2) {
+#       name <- as.character(terms[terms$term_id == parents[i] & terms$lang == lang, "term"])
+#       temp <- c()
+#       temp["id"] <- parents[i]
+#       temp["name"] <- name
+#       list[["ancestry"]][[i-1]] <- temp
+#     }
+#   }
   kids <- children(terms, rels, term, lang)
   if(length(kids) > 0) {
     for(i in 1:(length(kids))){
@@ -103,15 +103,15 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
       list[["children"]][[i]] <- temp
     }
   }
-  sibs <- siblings(terms, rels, term, lang)
-  if(length(sibs) > 1) {
-    for(i in 1:(length(sibs))){
-      name <- as.character(terms[terms$term_id == sibs[i] & terms$lang == lang, "term"])
-      temp <- c()
-      temp["id"] <- sibs[i]
-      temp["name"] <- name
-      list[["siblings"]][[i]] <- temp
-    }
-  }
+#   sibs <- siblings(terms, rels, term, lang)
+#   if(length(sibs) > 1) {
+#     for(i in 1:(length(sibs))){
+#       name <- as.character(terms[terms$term_id == sibs[i] & terms$lang == lang, "term"])
+#       temp <- c()
+#       temp["id"] <- sibs[i]
+#       temp["name"] <- name
+#       list[["siblings"]][[i]] <- temp
+#     }
+#   }
   list(message = list)
 }
