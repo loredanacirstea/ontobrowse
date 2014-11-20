@@ -6,40 +6,73 @@
     <!-- Include order: first jquery, then opencpu.js, and then your code -->
     <script src="opencpu/jquery-1.10.2.min.js"></script>
     <script src="opencpu/opencpu-0.4.js"></script>
+    <link rel="stylesheet" href="dist/themes/default/style.min.css" />
     <script>
     //init this script when the page has loaded
     $(document).ready(function(){
-      $("#submitbutton").on("click", function(){
-        //disable the button to prevent multiple clicks
-        $("#submitbutton").attr("disabled", "disabled");
-        
-        //read the value for 'myname'
-        var term = $("#idfield").val();
-        var lang = $("#langfield").val();
-        var origin = $("#origfield").val();
-        
+
         //perform the request
-        var req = ocpu.rpc("ontobrowse", {
-          term : term,
-          lang : lang,
-          origin : origin
-        }, function(output){
-          $("#output").text(output.message);
-        });
+        $('#jstree').jstree({
+          'core' : {
+            'data' : function (node, cb) {
+                //console.log(node["id"])
+                if(node["id"] == "#"){
+                  var id = '9000';
+                }
+                else{
+                  var id = node["id"];
+                }
+                jQuery.ajax({
+                    type: 'POST',
+                    url: "../R/ontobrowse",
+                    data: { 'term' : id,
+                            "lang": "\"la\"",
+                            "origin": '9000'
+                          },
+                    success: function(dat) {
+                        n = dat.split("\n");
+                        n = n[0] + "/json";
+                        jQuery.ajax({
+                            type: 'GET',
+                            url: n,
+                            success: function(data){
+                             n = data.message
+                             //console.log(n["children"])
+                             kids = [];
+                             for(i in n["children"]){
+                                kids.push(
+                                  { "id" : n["children"][i][0],
+                                    "text" : n["children"][i][1],
+                                    "state" : {'opened': false},
+                                    "children" : true
+                                  }
+                                  );
+                             }
+                             //console.log(kids)
+                          
+                             tree= {
+                                'id' : n["id"],
+                                'text' : n["name"],
+                                'state' : { 'opened' : true, 'selected' : true },
+                                'children' : kids
+                              }
+                              cb(tree);
+                            }
+                        })
+                    }
+                })
+          }
+        }
+          });
         
         //if R returns an error, alert the error message
-        req.fail(function(){
-          alert("Server error: " + req.responseText);
-        });
-        
-        //after request complete, re-enable the button 
-        req.always(function(){
-          $("#submitbutton").removeAttr("disabled")
-        });
-      });
+        //req.fail(function(){
+        //  alert("Server error: " + req.responseText);
+       // });
+
     });
-    </script>
     
+    </script>
     <style>
       #output{
         height: 400px;
@@ -52,17 +85,26 @@
   </head>
     
   <body>
-    <h1>Browse you ontology!</h1>
+    <h1>Browse your ontology!</h1>
     
-    <b>Term id (default to 9000): </b> <input type="text" id="idfield"></br>
-    <b>Language (default to Latin): </b> <input type="text" id="langfield"></br>
-    <b>Origin (default to 9000): </b> <input type="text" id="origfield"></br>
+    <input id="input" type="hidden">
 
-    <button id="submitbutton" type="button">Submit to server!</button>
-    
-    <p id="output"></p>
+    <div id="jstree"></div>
+    <!-- in this example the tree is populated from inline HTML --> 
+    <!--
+    <ul>
+      <li>Root node 1
+        <ul>
+          <li id="child_node_1">Child node 1</li>
+          <li>Child node 2</li>
+        </ul>
+      </li>
+      <li>Root node 2</li>
+    </ul>
+  -->
   
     <br />
-    
+   <script src="dist/jstree.min.js"></script> 
+  
   </body>
 </html>
