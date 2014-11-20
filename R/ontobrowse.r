@@ -106,7 +106,6 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
   if(length(sibs) > 1) {
     for(i in 1:(length(sibs))){
       name <- as.character(terms[terms$term_id == sibs[i] & terms$lang == lang, "term"])
-      text = paste(text, name, "(id:", sibs[i], "); ")
       temp <- c()
       temp["id"] <- sibs[i]
       temp["name"] <- name
