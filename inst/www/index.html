@@ -39,12 +39,20 @@
                              n = data.message
                              //console.log(n["children"])
                              kids = [];
-                             for(i in n["children"]){
+                             for(i in n["children"]){       
+                                console.log(n["children"][i][2]);
+                                if(n["children"][i][2] == "TRUE"){
+                                  var haskids = true;
+                                }
+                                else{
+                                  var haskids = false;
+                                }
+                                console.log(haskids);
                                 kids.push(
                                   { "id" : n["children"][i][0],
                                     "text" : n["children"][i][1],
                                     "state" : {'opened': false},
-                                    "children" : true
+                                    "children" : haskids
                                   }
                                   );
                              }
