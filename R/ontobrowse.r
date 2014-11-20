@@ -93,7 +93,7 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
     }
   }
   kids <- children(terms, rels, term, lang)
-  if(length(kids) > 1) {
+  if(length(kids) > 0) {
     for(i in 1:(length(kids))){
       name <- as.character(terms[terms$term_id == kids[i] & terms$lang == lang, "term"])
       temp <- c()
