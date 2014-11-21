@@ -86,6 +86,13 @@
                 })
           }
         }
+          }).bind("changed.jstree", function(evt, data) {
+              var i, j, r = [];
+              for(i = 0, j = data.selected.length; i < j; i++) {
+                r.push(data.instance.get_node(data.selected[i]).text);
+              }
+              $('#event_result').html('Selected: ' + r.join(', '));
+          
           });
         
                 //if R returns an error, alert the error message
@@ -94,7 +101,6 @@
                // });
       }
     //});
-    
 
       $(document).ready(function(){
         
@@ -119,32 +125,34 @@
             "27970" : "Terminologia Embryologica"
           }
    
-          for(var i of langs_r){
+          for(var i in langs_r){
               $("#dropdown_multi").append(
                 $('<li class="dropdown-submenu">').append(
                   $('<a>').attr({
                           'href':'javascript:;',
                           'tabindex' : "-1"
-                        }).append(langs[i]),
-                  $('<ul class="dropdown-menu" id="dropdown_'+i+'">')
+                        }).append(langs[langs_r[i]]),
+                  $('<ul class="dropdown-menu" id="dropdown_'+langs_r[i]+'">')
                   )
                 );
-              //console.log(i);
-              var ids = Object.keys(output[i])
-              for(var j of ids){
-                 //console.log(j);
-                  $("#dropdown_"+i).append(
+
+              var ids = Object.keys(output[langs_r[i]])
+              for(var j in ids){
+
+                  $("#dropdown_"+langs_r[i]).append(
                     $('<li>').append(
                       $('<a>').attr({
                           'href':'javascript:;',
                           'tabindex' : "-1",
-                          'onClick' : "tree1("+j+",'"+i+"');"
-                        }).append(output[i][j])
+                          'onClick' : "tree1("+ids[j]+",'"+langs_r[i]+"');"
+                        }).append(output[langs_r[i]][ids[j]])
                       )
                     );
               }              
               
           }
+          //$("#dropdown_multi").dropdown('show');
+          $('.dropdown-toggle').dropdown();
         });
 
           //if R returns an error, alert the error message
@@ -168,7 +176,7 @@
 
  <div class="container">
   <div class="row">
-        <hr>
+    </br>
         <div class="dropdown" id="dropdownid">
             <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-primary" data-target="#" href="/page.html">
                 Choose language and ontology <span class="caret"></span>
@@ -179,8 +187,10 @@
   </div>
 </div>
 </br>
+<div class="results" id="event_result" style="float:right;">
+  </div>
     <div id="jstree"></div>
-   
+    
   
     <br />
   </body>
