@@ -15,7 +15,10 @@
     <script>
     //init this script when the page has loaded
     //$(document).ready(function(){
-      function tree(term_id, lang){
+      function tree1(term_id, lang){
+        //console.log(term_id);
+        //$('#jstree').html("");
+        $('#jstree').jstree("destroy");
 
         $('#jstree').jstree({
           'plugins': ["checkbox"],
@@ -95,12 +98,19 @@
 
       $(document).ready(function(){
         
+          
+          var req = ocpu.rpc("ontologies",{}, function(output){
+            
+
+          var langs_r = Object.keys(output);
+
           var langs = {
             "la" :"Latin",
             "en" : "English",
             "es" : "Spanish",
             "jp" : "Japanese",
-            "ro" : "Romanian"
+            "ro" : "Romanian",
+            "t" : "FIPAT ids"
           }
           var onto = {
             "9000" : "Terminologia Morphologica",
@@ -109,32 +119,43 @@
             "27970" : "Terminologia Embryologica"
           }
    
-          for(var i in langs){
+          for(var i of langs_r){
               $("#dropdown_multi").append(
                 $('<li class="dropdown-submenu">').append(
                   $('<a>').attr({
                           'href':'javascript:;',
                           'tabindex' : "-1"
                         }).append(langs[i]),
-                  $('<ul class="dropdown-menu" id="dropdown_'+langs[i]+'">')
+                  $('<ul class="dropdown-menu" id="dropdown_'+i+'">')
                   )
                 );
               //console.log(i);
-
-              for(var j in onto){
+              var ids = Object.keys(output[i])
+              for(var j of ids){
                  //console.log(j);
-                  $("#dropdown_"+langs[i]).append(
+                  $("#dropdown_"+i).append(
                     $('<li>').append(
                       $('<a>').attr({
                           'href':'javascript:;',
                           'tabindex' : "-1",
-                          'onClick' : "tree("+j+",'"+i+"')"
-                        }).append(onto[j])
+                          'onClick' : "tree1("+j+",'"+i+"');"
+                        }).append(output[i][j])
                       )
                     );
               }              
               
           }
+        });
+
+          //if R returns an error, alert the error message
+          req.fail(function(){
+            alert("Server error: " + req.responseText);
+          });
+          
+          //after request complete, re-enable the button 
+          req.always(function(){
+            $("#submitbutton").removeAttr("disabled")
+          });
 
       });
     </script>
