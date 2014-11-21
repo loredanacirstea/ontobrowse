@@ -9,7 +9,6 @@
     <script src="dist/jstree.min.js"></script> 
     <link rel="stylesheet" href="dist/themes/proton/style.min.css" />
     
-
     <script>
 
       //$(function() {
@@ -25,7 +24,9 @@
           'core' : {
             'themes': {
                 'name': 'proton',
-                'responsive': true
+                'responsive': true,
+                'icons' : false
+                //'stripes' : true
             },
             'data' : function (node, cb) {
                 //console.log(node["id"])
