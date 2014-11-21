@@ -3,6 +3,9 @@ x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.cs
 terms <- read.csv(text = x)
 y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
 rels <- read.csv(text = y)
+z <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/ontologies.csv")
+ontoList <- read.csv(text = z)
+
 ancestry <- function(terms, rels, term, lang, origin, returnIds = TRUE) {
   if(class(term) == "numeric" || class(term) == "integer") {
     termId = term;

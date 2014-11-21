@@ -6,14 +6,28 @@
     <!-- Include order: first jquery, then opencpu.js, and then your code -->
     <script src="opencpu/jquery-1.10.2.min.js"></script>
     <script src="opencpu/opencpu-0.4.js"></script>
-    <link rel="stylesheet" href="dist/themes/default/style.min.css" />
+    <script src="dist/jstree.min.js"></script> 
+    <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+    <link rel="stylesheet" href="dist/themes/proton/style.min.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+
     <script>
+
+      //$(function() {
+      //  $( "#menu" ).menu();
+      //});
+
     //init this script when the page has loaded
     $(document).ready(function(){
-
+      //function tree(term_id, lang){
         //perform the request
         $('#jstree').jstree({
+          'plugins': ["checkbox"],
           'core' : {
+            'themes': {
+                'name': 'proton',
+                'responsive': true
+            },
             'data' : function (node, cb) {
                 //console.log(node["id"])
                 if(node["id"] == "#"){
@@ -40,14 +54,14 @@
                              //console.log(n["children"])
                              kids = [];
                              for(i in n["children"]){       
-                                console.log(n["children"][i][2]);
+                                //console.log(n["children"][i][2]);
                                 if(n["children"][i][2] == "TRUE"){
                                   var haskids = true;
                                 }
                                 else{
                                   var haskids = false;
                                 }
-                                console.log(haskids);
+                                //console.log(haskids);
                                 kids.push(
                                   { "id" : n["children"][i][0],
                                     "text" : n["children"][i][1],
@@ -73,46 +87,64 @@
         }
           });
         
-        //if R returns an error, alert the error message
-        //req.fail(function(){
-        //  alert("Server error: " + req.responseText);
-       // });
-
+                //if R returns an error, alert the error message
+                //req.fail(function(){
+                //  alert("Server error: " + req.responseText);
+               // });
+   //   }
     });
     
     </script>
-    <style>
-      #output{
-        height: 400px;
-        width: 500px;
-        border: 1px solid gray;
-        padding: 3px;
-      }
-    </style>
     
+    <style>
+      .ui-menu { width: 150px; }
+    </style>
+  
   </head>
     
   <body>
-    <h1>Browse your ontology!</h1>
-    
-    <input id="input" type="hidden">
 
-    <div id="jstree"></div>
-    <!-- in this example the tree is populated from inline HTML --> 
-    <!--
+    <h1>Browse your ontology!</h1>
+
+        <!--
+    <ul id="menu">
+  <li class="ui-state-disabled">Aberdeen</li>
+  <li>Ada</li>
+  <li>Adamsville</li>
+  <li>Addyston</li>
+  <li>Delphi
     <ul>
-      <li>Root node 1
+      <li class="ui-state-disabled">Ada</li>
+      <li>Saarland</li>
+      <li>Salzburg an der schönen Donau</li>
+    </ul>
+  </li>
+  <li>Saarland</li>
+  <li>Salzburg
+    <ul>
+      <li>Delphi
         <ul>
-          <li id="child_node_1">Child node 1</li>
-          <li>Child node 2</li>
+          <li>Ada</li>
+          <li>Saarland</li>
+          <li>Salzburg</li>
         </ul>
       </li>
-      <li>Root node 2</li>
+      <li>Delphi
+        <ul>
+          <li>Ada</li>
+          <li>Saarland</li>
+          <li>Salzburg</li>
+        </ul>
+      </li>
+      <li>Perch</li>
     </ul>
-  -->
+  </li>
+  <li class="ui-state-disabled">Amesville</li>
+</ul>
+-->
+    <div id="jstree"></div>
+   
   
     <br />
-   <script src="dist/jstree.min.js"></script> 
-  
   </body>
 </html>
