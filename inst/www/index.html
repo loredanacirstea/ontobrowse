@@ -7,18 +7,16 @@
     <script src="opencpu/jquery-1.10.2.min.js"></script>
     <script src="opencpu/opencpu-0.4.js"></script>
     <script src="dist/jstree.min.js"></script> 
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="dist/themes/proton/style.min.css" />
+    <link rel="stylesheet" href="css/menu.css" />
     
     <script>
-
-      //$(function() {
-      //  $( "#menu" ).menu();
-      //});
-
     //init this script when the page has loaded
-    $(document).ready(function(){
-      //function tree(term_id, lang){
-        //perform the request
+    //$(document).ready(function(){
+      function tree(term_id, lang){
+
         $('#jstree').jstree({
           'plugins': ["checkbox"],
           'core' : {
@@ -31,7 +29,7 @@
             'data' : function (node, cb) {
                 //console.log(node["id"])
                 if(node["id"] == "#"){
-                  var id = '9000';
+                  var id = term_id;
                 }
                 else{
                   var id = node["id"];
@@ -40,7 +38,7 @@
                     type: 'POST',
                     url: "../R/ontobrowse",
                     data: { 'term' : id,
-                            "lang": "\"la\"",
+                            "lang": "\""+lang+"\"",
                             "origin": '9000'
                           },
                     success: function(dat) {
@@ -91,57 +89,75 @@
                 //req.fail(function(){
                 //  alert("Server error: " + req.responseText);
                // });
-   //   }
-    });
+      }
+    //});
     
+
+      $(document).ready(function(){
+        
+          var langs = {
+            "la" :"Latin",
+            "en" : "English",
+            "es" : "Spanish",
+            "jp" : "Japanese",
+            "ro" : "Romanian"
+          }
+          var onto = {
+            "9000" : "Terminologia Morphologica",
+            "8222" : "Terminologia Anatomica",
+            "10001" : "Terminologia Histologica",
+            "27970" : "Terminologia Embryologica"
+          }
+   
+          for(var i in langs){
+              $("#dropdown_multi").append(
+                $('<li class="dropdown-submenu">').append(
+                  $('<a>').attr({
+                          'href':'javascript:;',
+                          'tabindex' : "-1"
+                        }).append(langs[i]),
+                  $('<ul class="dropdown-menu" id="dropdown_'+langs[i]+'">')
+                  )
+                );
+              //console.log(i);
+
+              for(var j in onto){
+                 //console.log(j);
+                  $("#dropdown_"+langs[i]).append(
+                    $('<li>').append(
+                      $('<a>').attr({
+                          'href':'javascript:;',
+                          'tabindex' : "-1",
+                          'onClick' : "tree("+j+",'"+i+"')"
+                        }).append(onto[j])
+                      )
+                    );
+              }              
+              
+          }
+
+      });
     </script>
-    
-    <style>
-      .ui-menu { width: 150px; }
-    </style>
-  
   </head>
     
   <body>
 
     <h1>Browse your ontology!</h1>
 
-        <!--
-    <ul id="menu">
-  <li class="ui-state-disabled">Aberdeen</li>
-  <li>Ada</li>
-  <li>Adamsville</li>
-  <li>Addyston</li>
-  <li>Delphi
-    <ul>
-      <li class="ui-state-disabled">Ada</li>
-      <li>Saarland</li>
-      <li>Salzburg an der schönen Donau</li>
-    </ul>
-  </li>
-  <li>Saarland</li>
-  <li>Salzburg
-    <ul>
-      <li>Delphi
-        <ul>
-          <li>Ada</li>
-          <li>Saarland</li>
-          <li>Salzburg</li>
-        </ul>
-      </li>
-      <li>Delphi
-        <ul>
-          <li>Ada</li>
-          <li>Saarland</li>
-          <li>Salzburg</li>
-        </ul>
-      </li>
-      <li>Perch</li>
-    </ul>
-  </li>
-  <li class="ui-state-disabled">Amesville</li>
-</ul>
--->
+
+ <div class="container">
+  <div class="row">
+        <hr>
+        <div class="dropdown" id="dropdownid">
+            <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-primary" data-target="#" href="/page.html">
+                Choose language and ontology <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu multi-level" id="dropdown_multi" role="menu" aria-labelledby="dropdownMenu">
+            </ul>
+        </div>
+  </div>
+</div>
+</br>
     <div id="jstree"></div>
    
   

@@ -64,6 +64,24 @@ siblings <- function(terms, rels, term, lang, returnIds = TRUE) {
   return(sibs);
 }
 
+#' Ontologies helps you browse your ontologies
+#'
+#' This function allows you to see what ontologies are available.
+#' no param
+#' ontologies()
+#' 
+ontologies <- function(){
+  langs <- levels(ontoList$lang)
+  data <- list()
+  for(lang in langs){
+    data[[lang]] <- list()
+    ids <- as.character(ontoList[ontoList$lang == lang, "subject_id"])
+    for(id in ids){
+      data[[lang]][id] <- as.character(ontoList[ontoList$lang == lang & ontoList$subject_id == id, "description"])
+    }
+  }
+  data
+}
 
 #' Ontobrowse helps you browse your ontology
 #'
