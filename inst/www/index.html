@@ -15,9 +15,12 @@
     <script>
     //init this script when the page has loaded
     //$(document).ready(function(){
+
       function tree1(term_id, lang){
         //console.log(term_id);
         //$('#jstree').html("");
+        $('.results').html('<div class="panel panel-info" id="panelid"><div class="panel-heading">Select one or more terms</div><div class="panel-body" id="event_result"></div></div>');
+
         $('#jstree').jstree("destroy");
 
         $('#jstree').jstree({
@@ -88,10 +91,41 @@
         }
           }).bind("changed.jstree", function(evt, data) {
               var i, j, r = [];
+              $('.results').html('<div class="panel panel-info" id="panelid"><div class="panel-heading">Info</div><div class="panel-body" id="event_result"></div></div>');
+              
               for(i = 0, j = data.selected.length; i < j; i++) {
-                r.push(data.instance.get_node(data.selected[i]).text);
+                //r.push(data.instance.get_node(data.selected[i]).text);
+                $('#event_result').append(
+                  $('<p>').append('ID: ' + data.instance.get_node(data.selected[i]).id + '; ' + data.instance.get_node(data.selected[i]).text)
+                );
               }
-              $('#event_result').html('Selected: ' + r.join(', '));
+              if(data.selected.length == 1){
+                  var txt = data.instance.get_node(data.selected[0]).text;
+                  txt = txt.toLowerCase();
+                  $('#event_result').append(
+                      $('<button>').attr({
+                                  'type': 'button',
+                                  'class': 'btn btn-primary btn-xs',
+                                  'onclick': 'window.open("https://www.google.com/?#q='+txt+'")'
+                                  }).append('Google'),
+                      $('<button>').attr({
+                                  'type': 'button',
+                                  'class': 'btn btn-default btn-xs',
+                                  'onclick': 'window.open("https://en.wikipedia.org/wiki/'+txt+'")'
+                                  }).append('Wiki'),
+                      $('<button>').attr({
+                                  'type': 'button',
+                                  'class': 'btn btn-primary btn-xs',
+                                  'onclick': 'window.open("https://www.google.com/search?tbm=isch&q='+txt+'")'
+                                  }).append('Images')
+                  );
+              }
+
+              if(data.selected.length == 0){
+                  $('.results').html('<div class="panel panel-info" id="panelid"><div class="panel-heading">Select one or more terms</div><div class="panel-body" id="event_result"></div></div>');
+              }
+
+              //$('#event_result').html(r.join(', '));
           
           });
         
@@ -124,6 +158,25 @@
             "10001" : "Terminologia Histologica",
             "27970" : "Terminologia Embryologica"
           }
+
+          $("#dropdownid").append(
+            $('<a>').attr({
+                    'id': 'dLabel',
+                    'role': 'button',
+                    'data-toggle': 'dropdown',
+                    'class': 'btn btn-primary',
+                    'data-target': '#',
+                    'href': '/page.html'
+                    }).append('Ontology').append(
+                $('<span>').attr({'class': 'caret'})
+                ),
+            $('<ul>').attr({
+                'class': 'dropdown-menu multi-level',
+                'id': 'dropdown_multi',
+                'role': 'menu',
+                'aria-labelledby': 'dropdownMenu'
+            })
+          );
    
           for(var i in langs_r){
               $("#dropdown_multi").append(
@@ -153,6 +206,7 @@
           }
           //$("#dropdown_multi").dropdown('show');
           $('.dropdown-toggle').dropdown();
+          //$('#dropdownid').dropdown('show');
         });
 
           //if R returns an error, alert the error message
@@ -165,30 +219,24 @@
             $("#submitbutton").removeAttr("disabled")
           });
 
+
       });
     </script>
   </head>
     
   <body>
 
-    <h1>Browse your ontology!</h1>
-
-
- <div class="container">
-  <div class="row">
-    </br>
-        <div class="dropdown" id="dropdownid">
-            <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-primary" data-target="#" href="/page.html">
-                Choose language and ontology <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu multi-level" id="dropdown_multi" role="menu" aria-labelledby="dropdownMenu">
-            </ul>
+    <div class="container">
+        <div class="row">
+              <div class="dropdown" id="dropdownid">
+              </div>
         </div>
-  </div>
-</div>
-</br>
-<div class="results" id="event_result" style="float:right;">
-  </div>
+    </div>
+
+    </br>
+    <div class="results"></div>
+    
+    </br></br>
     <div id="jstree"></div>
     
   
