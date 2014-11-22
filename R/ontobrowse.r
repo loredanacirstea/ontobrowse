@@ -66,6 +66,15 @@ siblings <- function(terms, rels, term, lang, returnIds = TRUE) {
   return(sibs);
 }
 
+smp_api <- function(term){
+  api<- list()
+  api[["x_med"]] <- as.character(unique(smp[smp$term_id == term & smp$x_med != 0, "x_med"]))
+  api[["x_min"]] <- as.character(unique(smp[smp$term_id == term & smp$x_min != 0, "x_min"]))
+  api[["x_max"]] <- as.character(unique(smp[smp$term_id == term & smp$x_max != 0, "x_max"]))
+  api[["color"]] <- as.character(unique(smp[smp$term_id == term, "color"]))
+  api
+}
+
 #' Ontologies helps you browse your ontologies
 #'
 #' This function allows you to see what ontologies are available.
@@ -102,13 +111,6 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
   list <- list()
   list[["id"]] <- term
   list[["name"]] <- as.character(terms[terms$term_id == term & terms$lang == lang, "term"])[1]
-  list[["smp"]] <- list()
-  api<- list()
-  api[["x_med"]] <- as.character(unique(smp[smp$term_id == term & smp$x_med != 0, "x_med"]))
-  api[["x_min"]] <- as.character(unique(smp[smp$term_id == term & smp$x_min != 0, "x_min"]))
-  api[["x_max"]] <- as.character(unique(smp[smp$term_id == term & smp$x_max != 0, "x_max"]))
-  api[["color"]] <- as.character(unique(smp[smp$term_id == term, "color"]))
-  list[["smp"]] <- api
   #list[["ancestry"]] <- list()
   list[["children"]] <- list()
   #list[["siblings"]] <- list()
