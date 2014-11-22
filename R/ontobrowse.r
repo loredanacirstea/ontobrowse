@@ -1,10 +1,12 @@
-library(RCurl)
-x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
-terms <- read.csv(text = x)
-y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
-rels <- read.csv(text = y)
-z <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/ontologies.csv")
-ontoList <- read.csv(text = z)
+# library(RCurl)
+# x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
+# terms <- read.csv(text = x)
+# y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
+# rels <- read.csv(text = y)
+# z <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/ontologies.csv")
+# ontoList <- read.csv(text = z)
+# s <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv")
+# smp <- read.csv(text = s)
 
 ancestry <- function(terms, rels, term, lang, origin, returnIds = TRUE) {
   if(class(term) == "numeric" || class(term) == "integer") {
@@ -100,9 +102,16 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
   list <- list()
   list[["id"]] <- term
   list[["name"]] <- as.character(terms[terms$term_id == term & terms$lang == lang, "term"])[1]
+  list[["smp"]] <- list()
+  api<- list()
+  api[["x_med"]] <- as.character(unique(smp[smp$term_id == term & smp$x_med != 0, "x_med"]))
+  api[["x_min"]] <- as.character(unique(smp[smp$term_id == term & smp$x_min != 0, "x_min"]))
+  api[["x_max"]] <- as.character(unique(smp[smp$term_id == term & smp$x_max != 0, "x_max"]))
+  api[["color"]] <- as.character(unique(smp[smp$term_id == term, "color"]))
+  list[["smp"]] <- api
   #list[["ancestry"]] <- list()
   list[["children"]] <- list()
-  list[["siblings"]] <- list()
+  #list[["siblings"]] <- list()
 #   parents <- ancestry(terms, rels, term, lang, origin)
 #   if(length(parents) > 0){
 #     for(i in length(parents):2) {
