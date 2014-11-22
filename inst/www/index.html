@@ -110,14 +110,34 @@
                                   }).append('Google'),
                       $('<button>').attr({
                                   'type': 'button',
-                                  'class': 'btn btn-default btn-xs',
-                                  'onclick': 'window.open("https://en.wikipedia.org/wiki/'+txt+'")'
-                                  }).append('Wiki'),
+                                  'class': 'btn btn-primary btn-xs',
+                                  'onclick': 'window.open("https://www.google.com/search?tbm=isch&q='+txt+'")'
+                                  }).append('Images'),
                       $('<button>').attr({
                                   'type': 'button',
                                   'class': 'btn btn-primary btn-xs',
-                                  'onclick': 'window.open("https://www.google.com/search?tbm=isch&q='+txt+'")'
-                                  }).append('Images')
+                                  'onclick': 'window.open("https://www.google.com/webhp#q='+txt+'&tbm=bks")'
+                                  }).append('Books'),
+                      $('<button>').attr({
+                                  'type': 'button',
+                                  'class': 'btn btn-primary btn-xs',
+                                  'onclick': 'window.open("http://scholar.google.com/scholar?hl='+lang+'&q='+txt+'")'
+                                  }).append('Scholar'),
+                      $('<button>').attr({
+                                  'type': 'button',
+                                  'class': 'btn btn-primary btn-xs',
+                                  'onclick': 'window.open("https://www.google.com/webhp#q='+txt+'&tbm=vid")'
+                                  }).append('Video'),
+                      $('<button>').attr({
+                                  'type': 'button',
+                                  'class': 'btn btn-primary btn-xs',
+                                  'onclick': 'window.open("https://www.google.com/webhp#q='+txt+'&tbm=app")'
+                                  }).append('Apps'),
+                      $('<button>').attr({
+                                  'type': 'button',
+                                  'class': 'btn btn-default btn-xs',
+                                  'onclick': 'window.open("https://en.wikipedia.org/wiki/'+txt+'")'
+                                  }).append('Wiki')
                   );
               }
 
