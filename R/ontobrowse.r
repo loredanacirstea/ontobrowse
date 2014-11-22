@@ -88,7 +88,13 @@ ontologies <- function(){
     data[[lang]] <- list()
     ids <- as.character(ontoList[ontoList$lang == lang, "subject_id"])
     for(id in ids){
-      data[[lang]][id] <- as.character(ontoList[ontoList$lang == lang & ontoList$subject_id == id, "description"])
+      data[[lang]][[id]] <- list()
+      temp <- list()
+      attr <- names(ontoList)
+      for(att in attr){
+        temp[[att]] <- as.character(ontoList[ontoList$lang == lang & ontoList$subject_id == id, att])
+      }
+      data[[lang]][[id]] <- temp
     }
   }
   data

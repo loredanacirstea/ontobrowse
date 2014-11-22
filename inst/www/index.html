@@ -75,7 +75,6 @@
                                   );
                              }
                              //console.log(kids)
-                          
                              tree= {
                                 'id' : n["id"],
                                 'text' : n["name"],
@@ -96,12 +95,13 @@
               for(i = 0, j = data.selected.length; i < j; i++) {
                 //r.push(data.instance.get_node(data.selected[i]).text);
                 $('#event_result').append(
-                  $('<p>').append('ID: ' + data.instance.get_node(data.selected[i]).id + '; ' + data.instance.get_node(data.selected[i]).text)
+                  $('<p>').append(data.instance.get_node(data.selected[i]).text)
                 );
               }
               if(data.selected.length == 1){
                   var txt = data.instance.get_node(data.selected[0]).text;
                   txt = txt.toLowerCase();
+                  var id = data.instance.get_node(data.selected[0]).id;
                   $('#event_result').append(
                       $('<button>').attr({
                                   'type': 'button',
@@ -136,16 +136,37 @@
                       $('<button>').attr({
                                   'type': 'button',
                                   'class': 'btn btn-default btn-xs',
-                                  'onclick': 'window.open("https://en.wikipedia.org/wiki/'+txt+'")'
+                                  'onclick': 'window.open("https://'+lang+'.wikipedia.org/wiki/'+txt+'")'
                                   }).append('Wiki')
                   );
+                  //console.log(data.instance.get_node(data.selected[0]));
+                  var request = ocpu.rpc("smp_api",{'term': id}, function(output){
+                    //console.log(output['x_med']);
+                    var xmed = output['x_med'][0];
+                    //console.log(xmed);
+                    if(xmed != undefined && xmed != 'NULL'){
+                      $('#event_result').append(
+                        $('<button>').attr({
+                                  'type': 'button',
+                                  'class': 'btn btn-danger btn-xs',
+                                  'onclick': 'window.open("http://sliced.ro/smp/nav2d.php?p='+xmed+'&a=0#0.385/20.738/-6.675")'
+                                  }).append('Smp')
+                        );
+                     }
+
+
+                  });
+
+                   //if R returns an error, alert the error message
+                    request.fail(function(){
+                      alert("Server error: " + request.responseText);
+                    });
+
               }
 
               if(data.selected.length == 0){
                   $('.results').html('<div class="panel panel-info" id="panelid"><div class="panel-heading">Select one or more terms</div><div class="panel-body" id="event_result"></div></div>');
               }
-
-              //$('#event_result').html(r.join(', '));
           
           });
         
@@ -232,11 +253,6 @@
           //if R returns an error, alert the error message
           req.fail(function(){
             alert("Server error: " + req.responseText);
-          });
-          
-          //after request complete, re-enable the button 
-          req.always(function(){
-            $("#submitbutton").removeAttr("disabled")
           });
 
 
