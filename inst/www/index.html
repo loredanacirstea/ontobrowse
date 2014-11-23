@@ -116,7 +116,25 @@
                   
                   var transl = [];                 
                   var rq = ocpu.rpc("translations",{'term': id}, function(output){
-                    console.log(output);
+                    //console.log(output);
+                    var langs = Object.keys(output);
+                    
+                    $('#event_result').append(
+                        $('<div class="table-responsive">').append(
+                            $('<table class="table table-hover" id="translations">')
+                        )              
+                    );
+                    
+                    for(i in langs){
+                      //console.log(output[langs[i]]);
+                        $('#translations').append(
+                            $('<tr>').append(
+                                $('<td>').append(langs[i]),
+                                $('<td>').append(output[langs[i]])
+                            )
+                        )
+                            
+                    }
 
                   });
                   rq.fail(function(){

@@ -86,7 +86,7 @@ path <- function(term, lang="la", origin=9000){
 
 #' Translations gives all the translations found in the ontologies, for a term ID
 #'
-#' This function outputs an array with key = language (ex."la","en" etc.) and value = translation
+#' This function outputs a list with key = language (ex."la","en" etc.) and value = translation
 #' @param term Give a term ID
 #' translations()
 #' 
