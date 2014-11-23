@@ -109,9 +109,13 @@ img{
 .img_apps{
     height: 40px;
 }
+.img_apps_first{
+    height: 60px;
+    padding-right: 20px;
+}
 .logo{
     height: 40px;
 }
 .btn-logo{
-    
+
 }

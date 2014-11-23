@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tools</title>
+    
+    <!-- Include order: first jquery, then opencpu.js, and then your code -->
+    <script src="opencpu/jquery-1.10.2.min.js"></script>
+    <script src="opencpu/opencpu-0.4.js"></script>
+    <script src="dist/jstree.min.js"></script> 
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/tools.css" />
+
+    <script>
+      var vars = [], hash;
+      var q = document.URL.split('?')[1];
+      if(q != undefined){
+          q = q.split('&');
+          for(var i = 0; i < q.length; i++){
+              hash = q[i].split('=');
+              vars.push(hash[1]);
+              vars[hash[0]] = hash[1];
+          }
+      }
+      var id = vars["id"];
+      var lang = vars["lang"];
+      var origin = vars["origin"];
+      //alert(id+' '+' '+lang+' '+origin);
+      //console.log(id);
+
+      var request = ocpu.rpc("ontobrowse",{
+                                    'term': id,
+                                    'lang': lang,
+                                    'origin': origin
+                                    }, function(output){
+          var n = output.message;
+          $("#dropdown_tool_kids").append(
+            $('<button>').attr({
+                    'id': 'dropdown_children',
+                    'type': 'button',
+                    'data-toggle': 'dropdown',
+                    'class': 'btn btn-default dropdown-toggle',
+                    'aria-expanded': 'true'
+                    }).append(n["name"]).append(
+                  $('<span>').attr({'class': 'caret'})
+                  ),
+            $('<ul>').attr({
+                          'id': 'dropdown_children_ul',
+                          'class': 'dropdown-menu',
+                          'role': 'menu',
+                          'aria-labelledby': 'dropdown_children'
+                          })
+            );
+
+          for(i in n["children"]){
+              $('#dropdown_kids').append(
+                  $('<li>').attr({'role': 'presentation'}).append(
+                      $('<a>').attr({
+                                      'role': 'menuitem',
+                                      'tabindex': '-1',
+                                      'href': '#'
+                                      }).append(n["children"][i][1])
+                  )
+              );
+          }
+
+      });
+
+      request.fail(function(){
+          alert("Server error: " + request.responseText);
+      });
+
+      var req = ocpu.rpc("path",{
+                                'term': id,
+                                'lang': lang,
+                                'origin': origin
+                                }, function(output){
+          var n = output;
+          $("#dropdown_tool_path").append(
+            $('<button>').attr({
+                    'id': 'dropdown_path',
+                    'type': 'button',
+                    'data-toggle': 'dropdown',
+                    'class': 'btn btn-default dropdown-toggle',
+                    'aria-expanded': 'true'
+                    }).append(n[id]).append(
+                  $('<span>').attr({'class': 'caret'})
+                  ),
+            $('<ul>').attr({
+                          'id': 'dropdown_path_ul',
+                          'class': 'dropdown-menu',
+                          'role': 'menu',
+                          'aria-labelledby': 'dropdown_path'
+                          })
+            );
+
+          for(i=1; i<n.length; i++){
+              $('#dropdown_path_ul').append(
+                  $('<li>').attr({'role': 'presentation'}).append(
+                      $('<a>').attr({
+                                      'role': 'menuitem',
+                                      'tabindex': '-1',
+                                      'href': '#'
+                                      }).append(n[i])
+                  )
+              );
+          }
+                  
+
+
+      });
+
+      req.fail(function(){
+          alert("Server error: " + request.responseText);
+      });
+
+    </script>
+  </head>
+    
+  <body>
+
+    <div class="container">
+        <div class="row">
+              <div class="dropdown" id="dropdown_tool_kids">
+              </div>
+              <div class="dropdown" id="dropdown_tool_path">
+              </div>
+
+        </div>
+    </div>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>

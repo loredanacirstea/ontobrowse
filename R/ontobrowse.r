@@ -1,26 +1,19 @@
-library(RCurl)
-x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
-terms <- read.csv(text = x)
-y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
-rels <- read.csv(text = y)
-z <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/ontologies.csv")
-ontoList <- read.csv(text = z)
-s <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv")
-smp <- read.csv(text = s)
+# library(RCurl)
+# x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
+# terms <- read.csv(text = x)
+# y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
+# rels <- read.csv(text = y)
+# z <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/ontologies.csv")
+# ontoList <- read.csv(text = z)
+# s <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv")
+# smp <- read.csv(text = s)
 
 ancestry <- function(terms, rels, term, lang, origin, returnIds = TRUE) {
-  if(class(term) == "numeric" || class(term) == "integer") {
-    termId = term;
-  }
-  else {
-    termId = terms[terms$term == term, "term_id"];
-    termId <- termId[!is.na(termId)][1];
-  }
-  path = termId;
-  if(termId == origin) {
+  path = term
+  if(term == origin) {
     return();
   }
-  id = termId;
+  id = term;
   while((id != origin) == TRUE) {
     parent = rels[rels$term1 == id & rels$relation == 1,"term2"][1];
     path = c(path, parent);
@@ -38,13 +31,7 @@ ancestry <- function(terms, rels, term, lang, origin, returnIds = TRUE) {
   }
 }
 children <- function(terms, rels, term, lang, returnIds = TRUE) {
-  if(class(term) == "numeric" || class(term) == "integer") {
-    termId = term;
-  }
-  else {
-    termId = terms[terms$term == term, "term_id"];
-    termId <- termId[!is.na(termId)][1];
-  }
+  termId = term
   kidsIds = rels[rels$term2 == termId & rels$relation == 1,"term1"];
   if(returnIds == TRUE) {
     result <- kidsIds;

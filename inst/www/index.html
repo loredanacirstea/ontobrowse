@@ -15,7 +15,16 @@
     <script>
     //init this script when the page has loaded
     //$(document).ready(function(){
-
+      var languages = {
+            "la" :"Latin",
+            "en" : "English",
+            "es" : "Spanish",
+            "jp" : "Japanese",
+            "ro" : "Romanian",
+            "t" : "FIPAT ids"
+          }
+      var origin = '9000';
+      $(function () { $("[data-toggle='tooltip']").tooltip(); });
       function tree1(term_id, lang, description, language, relation_name, source){
         //console.log(term_id);
         //$('#jstree').html("");
@@ -62,7 +71,7 @@
                     url: "../R/ontobrowse",
                     data: { 'term' : id,
                             "lang": "\""+lang+"\"",
-                            "origin": '9000'
+                            "origin": origin
                           },
                     success: function(dat) {
                         n = dat.split("\n");
@@ -114,7 +123,7 @@
                   txt = txt.toLowerCase();
                   var id = data.instance.get_node(data.selected[0]).id;
                   
-                  var transl = [];                 
+                  var transl = [];               
                   var rq = ocpu.rpc("translations",{'term': id}, function(output){
                     //console.log(output);
                     var langs = Object.keys(output);
@@ -124,12 +133,19 @@
                             $('<table class="table table-hover" id="translations">')
                         )              
                     );
-                    
+
                     for(i in langs){
                       //console.log(output[langs[i]]);
                         $('#translations').append(
                             $('<tr>').append(
-                                $('<td>').append('<img src="icons/'+langs[i]+'.png">'),
+                                $('<td>').append(
+                                    $('<img>').attr({
+                                                'src': 'icons/'+langs[i]+'.png',
+                                                'data-toggle': 'tooltip',
+                                                'data-placement': 'left',
+                                                'title': languages[langs[i]]
+                                              })
+                                    ),
                                 $('<td>').append(output[langs[i]])
                             )
                         )
@@ -144,9 +160,19 @@
 
                   $('#event_result').append(
                     $('<div class="search">').append(
+                      $('<img>').attr({
+                                          'class': 'img_apps_first',
+                                          'src': 'icons/search.png',
+                                          'data-toggle': 'tooltip',
+                                          'data-placement': 'left',
+                                          'title': 'Search Tools'
+                                          }),
                       $('<a>').attr({
                                 'target': '_blank',
-                                'href': 'https://www.google.com/?#q='+txt
+                                'href': 'https://www.google.com/?#q='+txt,
+                                'data-toggle': 'tooltip',
+                                'data-placement': 'left',
+                                'title': 'Google Search'
                                 }).append(
                                 $('<img>').attr({
                                           'class': 'img_apps',
@@ -155,37 +181,55 @@
                                 ),
                       $('<a>').attr({
                                 'target': '_blank',
-                                'href': 'https://www.google.com/search?tbm=isch&q='+txt
+                                'href': 'https://www.google.com/search?tbm=isch&q='+txt,
+                                'data-toggle': 'tooltip',
+                                'data-placement': 'bottom',
+                                'title': 'Google Images'
                                 }).append(
                                 $('<img>').attr({'class': 'img_apps', 'src': 'icons/image.png'})
                                 ),
                       $('<a>').attr({
                                 'target': '_blank',
-                                'href': 'https://www.google.com/webhp#q='+txt+'&tbm=bks'
+                                'href': 'https://www.google.com/webhp#q='+txt+'&tbm=bks',
+                                'data-toggle': 'tooltip',
+                                'data-placement': 'bottom',
+                                'title': 'Google Books'
                                 }).append(
                                 $('<img>').attr({'class': 'img_apps', 'src': 'icons/books.png'})
                                 ),
                       $('<a>').attr({
                                 'target': '_blank',
-                                'href': 'http://scholar.google.com/scholar?hl='+lang+'&q='+txt
+                                'href': 'http://scholar.google.com/scholar?hl='+lang+'&q='+txt,
+                                'data-toggle': 'tooltip',
+                                'data-placement': 'bottom',
+                                'title': 'Google Scholar'
                                 }).append(
                                 $('<img>').attr({'class': 'img_apps', 'src': 'icons/scholar.png'})
                                 ),
                       $('<a>').attr({
                                 'target': '_blank',
-                                'href': 'https://www.google.com/webhp#q='+txt+'&tbm=vid'
+                                'href': 'https://www.google.com/webhp#q='+txt+'&tbm=vid',
+                                'data-toggle': 'tooltip',
+                                'data-placement': 'bottom',
+                                'title': 'Google Videos'
                                 }).append(
                                 $('<img>').attr({'class': 'img_apps', 'src': 'icons/video.png'})
                                 ),
                       $('<a>').attr({
                                 'target': '_blank',
-                                'href': 'https://www.google.com/webhp#q='+txt+'&tbm=app'
+                                'href': 'https://www.google.com/webhp#q='+txt+'&tbm=app',
+                                'data-toggle': 'tooltip',
+                                'data-placement': 'bottom',
+                                'title': 'Google Apps'
                                 }).append(
                                 $('<img>').attr({'class': 'img_apps', 'src': 'icons/apps.png'})
                                 ),
                       $('<a>').attr({
                                 'target': '_blank',
-                                'href': 'https://'+lang+'.wikipedia.org/wiki/'+txt
+                                'href': 'https://'+lang+'.wikipedia.org/wiki/'+txt,
+                                'data-toggle': 'tooltip',
+                                'data-placement': 'bottom',
+                                'title': 'Wikipedia'
                                 }).append(
                                 $('<img>').attr({'class': 'img_apps', 'src': 'icons/wiki.png'})
                                 )
@@ -200,21 +244,40 @@
                     if(xmed != undefined && xmed != 'NULL'){
                       $('#event_result').append(
                         $('<div class="smp">').append(
-                            $('<button>').attr({
-                                  'type': 'button',
-                                  'class': 'btn btn-danger btn-xs',
-                                  'onclick': 'window.open("http://sliced.ro/smp/nav2d.php?p='+xmed+'&a=0#0.385/20.738/-6.675")'
-                                  }).append('SmpH'),
-                            $('<button>').attr({
-                                  'type': 'button',
-                                  'class': 'btn btn-danger btn-xs',
-                                  'onclick': 'window.open("http://sliced.ro/smp/nav2d.php?h=1#0.265/288.27/17.7")'
-                                  }).append('SmpS'),
-                            $('<button>').attr({
-                                  'type': 'button',
-                                  'class': 'btn btn-danger btn-xs',
-                                  'onclick': 'window.open("http://sliced.ro/smp/nav2d.php?h=2#0.265/173.27/17.7")'
-                                  }).append('SmpF')
+                            $('<img>').attr({
+                                          'class': 'img_apps_first',
+                                          'src': 'icons/apps.png',
+                                          'data-toggle': 'tooltip',
+                                          'data-placement': 'left',
+                                          'title': 'Sapiens Mapping Project'
+                                          }),
+                            $('<a>').attr({
+                                  'target': '_blank',
+                                  'href': 'http://sliced.ro/smp/nav2d.php?p='+xmed+'&a=0#0.385/20.738/-6.675',
+                                  'data-toggle': 'tooltip',
+                                  'data-placement': 'bottom',
+                                  'title': 'Axial 2DNavigator'
+                                  }).append(
+                                  $('<img>').attr({'class': 'img_apps', 'src': 'icons/axial.png'})
+                                  ),
+                            $('<a>').attr({
+                                  'target': '_blank',
+                                  'href': 'http://sliced.ro/smp/nav2d.php?h=1#0.265/288.27/17.7',
+                                  'data-toggle': 'tooltip',
+                                  'data-placement': 'bottom',
+                                  'title': 'Sagittal 2DNavigator'
+                                  }).append(
+                                  $('<img>').attr({'class': 'img_apps', 'src': 'icons/sagittal.png'})
+                                  ),
+                            $('<a>').attr({
+                                  'target': '_blank',
+                                  'href': 'http://sliced.ro/smp/nav2d.php?h=2#0.265/173.27/17.7',
+                                  'data-toggle': 'tooltip',
+                                  'data-placement': 'bottom',
+                                  'title': 'Frontal 2DNavigator'
+                                  }).append(
+                                  $('<img>').attr({'class': 'img_apps', 'src': 'icons/frontal.png'})
+                                  )
                         )
                       );
                     }
@@ -226,6 +289,19 @@
                     request.fail(function(){
                       alert("Server error: " + request.responseText);
                     });
+
+                    $('#event_result').append(
+                        $('<div class="plugins">').append(
+                            $('<a>').attr({
+                                  'target': '_blank',
+                                  'href': 'tools.html?id='+id+'&lang='+lang+'&origin='+origin,
+                                  'data-toggle': 'tooltip',
+                                  'data-placement': 'bottom',
+                                  'title': 'Subject Plugins'
+                                  }).append(
+                                  $('<img>').attr({'class': 'img_apps_first', 'src': 'icons/plugin.png'})
+                                  )
+                            ));
 
               } else if(data.selected.length > 1){
                         for(i = 0, j = data.selected.length; i < j; i++) {
@@ -256,15 +332,6 @@
             
             //console.log(output);
           var langs_r = Object.keys(output);
-          //console.log(langs_r);
-          var langs = {
-            "la" :"Latin",
-            "en" : "English",
-            "es" : "Spanish",
-            "jp" : "Japanese",
-            "ro" : "Romanian",
-            "t" : "FIPAT ids"
-          }
           var onto = {
             "9000" : "Terminologia Morphologica",
             "8222" : "Terminologia Anatomica",
@@ -302,10 +369,9 @@
                   $('<a>').attr({
                           'href':'javascript:;',
                           'tabindex' : "-1"
-                        //}).append(langs[langs_r[i]]),
                           }).append(
                           $('<img src="icons/'+langs_r[i]+'.png">'),
-                          $('<span id="lang_drop">').append(langs[langs_r[i]])
+                          $('<span id="lang_drop">').append(languages[langs_r[i]])
                           ),
                   $('<ul class="dropdown-menu" id="dropdown_'+langs_r[i]+'">')
                   )
@@ -322,7 +388,7 @@
                           'tabindex' : "-1",
                           'onClick' : "tree1("+ids[j]+",'"+langs_r[i]+"','"
                                   +output[langs_r[i]][ids[j]]["description"]+"', '"
-                                  +langs[langs_r[i]]+"', '"
+                                  +languages[langs_r[i]]+"', '"
                                   +output[langs_r[i]][ids[j]]["relation_name"]+"', '"
                                   +output[langs_r[i]][ids[j]]["source"]+"', '"
                                   +"');"
