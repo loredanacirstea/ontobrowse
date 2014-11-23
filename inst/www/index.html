@@ -36,7 +36,7 @@
         $('#lang').html(language);
         $('#description').html(' - '+description);
         $('#relation').html(' - '+relation_name);
-        $('#source').html(' - '+source);
+        $('#source').html('<a target="_blank" href="'+source+'">'+' - '+source+'</a>');
         
         $('#jstree').jstree("destroy");
 
@@ -109,16 +109,21 @@
               var i, j, r = [];
               $('.results').html('<div class="panel panel-info" id="panelid"><div class="panel-heading">Info</div><div class="panel-body" id="event_result"></div></div>');
               
-              for(i = 0, j = data.selected.length; i < j; i++) {
-                //r.push(data.instance.get_node(data.selected[i]).text);
-                $('#event_result').append(
-                  $('<p>').append(data.instance.get_node(data.selected[i]).text)
-                );
-              }
               if(data.selected.length == 1){
                   var txt = data.instance.get_node(data.selected[0]).text;
                   txt = txt.toLowerCase();
                   var id = data.instance.get_node(data.selected[0]).id;
+                  
+                  var transl = [];                 
+                  var rq = ocpu.rpc("translations",{'term': id}, function(output){
+                    console.log(output);
+
+                  });
+                  rq.fail(function(){
+                      alert("Server error: " + rq.responseText);
+                    });
+                  
+
                   $('#event_result').append(
                     $('<div class="search">').append(
                       $('<button>').attr({
@@ -194,11 +199,18 @@
                       alert("Server error: " + request.responseText);
                     });
 
-              }
+              } else if(data.selected.length > 1){
+                        for(i = 0, j = data.selected.length; i < j; i++) {
+                            //r.push(data.instance.get_node(data.selected[i]).text);
+                            $('#event_result').append(
+                              $('<p>').append(data.instance.get_node(data.selected[i]).text)
+                            );
+                        }
+                      }
 
-              if(data.selected.length == 0){
-                  $('.results').html('<div class="panel panel-info" id="panelid"><div class="panel-heading">Select one or more terms</div><div class="panel-body" id="event_result"></div></div>');
-              }
+                      else if(data.selected.length == 0){
+                          $('.results').html('<div class="panel panel-info" id="panelid"><div class="panel-heading">Select one or more terms</div><div class="panel-body" id="event_result"></div></div>');
+                      }
           
           });
         
