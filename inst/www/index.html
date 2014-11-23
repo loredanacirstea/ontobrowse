@@ -16,11 +16,25 @@
     //init this script when the page has loaded
     //$(document).ready(function(){
 
-      function tree1(term_id, lang){
+      function tree1(term_id, lang, description, language, relation_name, source){
         //console.log(term_id);
         //$('#jstree').html("");
         $('.results').html('<div class="panel panel-info" id="panelid"><div class="panel-heading">Select one or more terms</div><div class="panel-body" id="event_result"></div></div>');
+        $('.row').append(
+            $('<div id="ontology">').append(
+                $('<p id="lang">'),
+                $('<p id="description">'),
+                $('<p id="relation">'),
+                $('<p id="source">')
+            )
+        )
 
+
+        $('#lang').html(language);
+        $('#description').html(' - '+description);
+        $('#relation').html(' - '+relation_name);
+        $('#source').html(' - '+source);
+        
         $('#jstree').jstree("destroy");
 
         $('#jstree').jstree({
@@ -103,6 +117,7 @@
                   txt = txt.toLowerCase();
                   var id = data.instance.get_node(data.selected[0]).id;
                   $('#event_result').append(
+                    $('<div class="search">').append(
                       $('<button>').attr({
                                   'type': 'button',
                                   'class': 'btn btn-primary btn-xs',
@@ -138,21 +153,35 @@
                                   'class': 'btn btn-default btn-xs',
                                   'onclick': 'window.open("https://'+lang+'.wikipedia.org/wiki/'+txt+'")'
                                   }).append('Wiki')
+                    )
                   );
                   //console.log(data.instance.get_node(data.selected[0]));
+                  
                   var request = ocpu.rpc("smp_api",{'term': id}, function(output){
                     //console.log(output['x_med']);
                     var xmed = output['x_med'][0];
                     //console.log(xmed);
                     if(xmed != undefined && xmed != 'NULL'){
                       $('#event_result').append(
-                        $('<button>').attr({
+                        $('<div class="smp">').append(
+                            $('<button>').attr({
                                   'type': 'button',
                                   'class': 'btn btn-danger btn-xs',
                                   'onclick': 'window.open("http://sliced.ro/smp/nav2d.php?p='+xmed+'&a=0#0.385/20.738/-6.675")'
-                                  }).append('Smp')
-                        );
-                     }
+                                  }).append('SmpH'),
+                            $('<button>').attr({
+                                  'type': 'button',
+                                  'class': 'btn btn-danger btn-xs',
+                                  'onclick': 'window.open("http://sliced.ro/smp/nav2d.php?h=1#0.265/288.27/17.7")'
+                                  }).append('SmpS'),
+                            $('<button>').attr({
+                                  'type': 'button',
+                                  'class': 'btn btn-danger btn-xs',
+                                  'onclick': 'window.open("http://sliced.ro/smp/nav2d.php?h=2#0.265/173.27/17.7")'
+                                  }).append('SmpF')
+                        )
+                      );
+                    }
 
 
                   });
@@ -182,9 +211,9 @@
           
           var req = ocpu.rpc("ontologies",{}, function(output){
             
-
+            //console.log(output);
           var langs_r = Object.keys(output);
-
+          //console.log(langs_r);
           var langs = {
             "la" :"Latin",
             "en" : "English",
@@ -231,6 +260,7 @@
                 );
 
               var ids = Object.keys(output[langs_r[i]])
+              //console.log(ids);
               for(var j in ids){
 
                   $("#dropdown_"+langs_r[i]).append(
@@ -238,8 +268,13 @@
                       $('<a>').attr({
                           'href':'javascript:;',
                           'tabindex' : "-1",
-                          'onClick' : "tree1("+ids[j]+",'"+langs_r[i]+"');"
-                        }).append(output[langs_r[i]][ids[j]])
+                          'onClick' : "tree1("+ids[j]+",'"+langs_r[i]+"','"
+                                  +output[langs_r[i]][ids[j]]["description"]+"', '"
+                                  +langs[langs_r[i]]+"', '"
+                                  +output[langs_r[i]][ids[j]]["relation_name"]+"', '"
+                                  +output[langs_r[i]][ids[j]]["source"]+"', '"
+                                  +"');"
+                        }).append(output[langs_r[i]][ids[j]]["description"])
                       )
                     );
               }              
@@ -271,8 +306,7 @@
 
     </br>
     <div class="results"></div>
-    
-    </br></br>
+  </br></br></br>
     <div id="jstree"></div>
     
   
