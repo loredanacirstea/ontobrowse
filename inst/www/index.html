@@ -20,6 +20,9 @@
         //console.log(term_id);
         //$('#jstree').html("");
         $('.results').html('<div class="panel panel-info" id="panelid"><div class="panel-heading">Select one or more terms</div><div class="panel-body" id="event_result"></div></div>');
+        if($('#ontology')){
+            $('#ontology').remove();
+        }
         $('.row').append(
             $('<div id="ontology">').append(
                 $('<p id="lang">'),
@@ -306,7 +309,7 @@
 
     </br>
     <div class="results"></div>
-  </br></br></br>
+  </br></br>
     <div id="jstree"></div>
     
   
