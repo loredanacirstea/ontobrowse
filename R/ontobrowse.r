@@ -1,12 +1,12 @@
-library(RCurl)
-x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
-terms <- read.csv(text = x)
-y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
-rels <- read.csv(text = y)
-z <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/ontologies.csv")
-ontoList <- read.csv(text = z)
-s <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv")
-smp <- read.csv(text = s)
+# library(RCurl)
+# x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
+# terms <- read.csv(text = x)
+# y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
+# rels <- read.csv(text = y)
+# z <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/ontologies.csv")
+# ontoList <- read.csv(text = z)
+# s <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv")
+# smp <- read.csv(text = s)
 
 ancestry <- function(terms, rels, term, lang, origin, returnIds = TRUE) {
   if(class(term) == "numeric" || class(term) == "integer") {
@@ -68,15 +68,19 @@ siblings <- function(terms, rels, term, lang, returnIds = TRUE) {
 
 #' Path shows the ancestry path from the root of the ontology to the given term ID. Does not support multiple inheritance now.
 #'
-#' This function outputs an array of IDs or of terms in the language provided. Order: term ID ->...-> origin
+#' This function outputs a list: key = ID, value = terms in the language provided. Order: term ->...-> ontology root(origin)
 #' @param term Give a term ID. 
 #' @param lang Give a language. Default: "la"
 #' @param origin Give an origin. Default: 9000
 #' @param returnIds Return IDs or terms in the provided language. Default: FALSE
 #' path()
 #' 
-path <- function(term, lang="la", origin=9000, returnIds = FALSE){
-  result <- ancestry(terms, rels, term, lang, origin, returnIds)
+path <- function(term, lang="la", origin=9000){
+  ids <- ancestry(terms, rels, term, lang, origin)
+  result <- list()
+  for(id in ids){
+    result[[as.character(id)]] <- as.character(terms[terms$term_id == id & terms$lang == lang, "term"])
+  }
   result
 }
 
@@ -88,9 +92,9 @@ path <- function(term, lang="la", origin=9000, returnIds = FALSE){
 #' 
 translations <- function(term){
     transl <- terms[terms$term_id == term,]
-    translations <- c()
+    translations <- list()
     for(row in row.names(transl)){
-      translations[as.character(transl[row,"lang"])] <- as.character(transl[row,"term"])
+      translations[[as.character(transl[row,"lang"])]] <- as.character(transl[row,"term"])
     }
     translations
 }
