@@ -32,7 +32,7 @@ ancestry <- function(terms, rels, term, lang, origin, returnIds = TRUE) {
   else {
     termsNames = c();
     for(id in path) {
-      termsNames = c(termsNames, terms[terms$term_id == id & terms$lang == lang, "term"]);
+      termsNames = c(termsNames, as.character(terms[terms$term_id == id & terms$lang == lang, "term"]));
     }
     return(termsNames);
   }
@@ -66,6 +66,41 @@ siblings <- function(terms, rels, term, lang, returnIds = TRUE) {
   return(sibs);
 }
 
+#' Path shows the ancestry path from the root of the ontology to the given term ID. Does not support multiple inheritance now.
+#'
+#' This function outputs an array of IDs or of terms in the language provided. Order: term ID ->...-> origin
+#' @param term Give a term ID. 
+#' @param lang Give a language. Default: "la"
+#' @param origin Give an origin. Default: 9000
+#' @param returnIds Return IDs or terms in the provided language. Default: FALSE
+#' path()
+#' 
+path <- function(term, lang="la", origin=9000, returnIds = FALSE){
+  result <- ancestry(terms, rels, term, lang, origin, returnIds)
+  result
+}
+
+#' Translations gives all the translations found in the ontologies, for a term ID
+#'
+#' This function outputs an array with key = language (ex."la","en" etc.) and value = translation
+#' @param term Give a term ID
+#' translations()
+#' 
+translations <- function(term){
+    transl <- terms[terms$term_id == term,]
+    translations <- c()
+    for(row in row.names(transl)){
+      translations[as.character(transl[row,"lang"])] <- as.character(transl[row,"term"])
+    }
+    translations
+}
+
+#' Sapiens Mapping API allows accessing anatomy elements from the 2D atlas by id
+#'
+#' This function outputs the SMP color used for the element and the minimum, maximum and intermediary values for the slices in which the element is present.
+#' @param term Give a term ID
+#' smp_api()
+#' 
 smp_api <- function(term){
   api<- list()
   api[["x_med"]] <- as.character(unique(smp[smp$term_id == term & smp$x_med != 0, "x_med"]))
