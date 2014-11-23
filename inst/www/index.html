@@ -33,10 +33,10 @@
         )
 
 
-        $('#lang').html(language);
-        $('#description').html(' - '+description);
+        $('#lang').html('<img src="icons/'+lang+'.png">');
+        $('#description').html(description);
         $('#relation').html(' - '+relation_name);
-        $('#source').html('<a target="_blank" href="'+source+'">'+' - '+source+'</a>');
+        $('#source').html('<a target="_blank" href="'+source+'"><img src="icons/link.png"></a>');
         
         $('#jstree').jstree("destroy");
 
@@ -129,7 +129,7 @@
                       //console.log(output[langs[i]]);
                         $('#translations').append(
                             $('<tr>').append(
-                                $('<td>').append(langs[i]),
+                                $('<td>').append('<img src="icons/'+langs[i]+'.png">'),
                                 $('<td>').append(output[langs[i]])
                             )
                         )
@@ -144,41 +144,51 @@
 
                   $('#event_result').append(
                     $('<div class="search">').append(
-                      $('<button>').attr({
-                                  'type': 'button',
-                                  'class': 'btn btn-primary btn-xs',
-                                  'onclick': 'window.open("https://www.google.com/?#q='+txt+'")'
-                                  }).append('Google'),
-                      $('<button>').attr({
-                                  'type': 'button',
-                                  'class': 'btn btn-primary btn-xs',
-                                  'onclick': 'window.open("https://www.google.com/search?tbm=isch&q='+txt+'")'
-                                  }).append('Images'),
-                      $('<button>').attr({
-                                  'type': 'button',
-                                  'class': 'btn btn-primary btn-xs',
-                                  'onclick': 'window.open("https://www.google.com/webhp#q='+txt+'&tbm=bks")'
-                                  }).append('Books'),
-                      $('<button>').attr({
-                                  'type': 'button',
-                                  'class': 'btn btn-primary btn-xs',
-                                  'onclick': 'window.open("http://scholar.google.com/scholar?hl='+lang+'&q='+txt+'")'
-                                  }).append('Scholar'),
-                      $('<button>').attr({
-                                  'type': 'button',
-                                  'class': 'btn btn-primary btn-xs',
-                                  'onclick': 'window.open("https://www.google.com/webhp#q='+txt+'&tbm=vid")'
-                                  }).append('Video'),
-                      $('<button>').attr({
-                                  'type': 'button',
-                                  'class': 'btn btn-primary btn-xs',
-                                  'onclick': 'window.open("https://www.google.com/webhp#q='+txt+'&tbm=app")'
-                                  }).append('Apps'),
-                      $('<button>').attr({
-                                  'type': 'button',
-                                  'class': 'btn btn-default btn-xs',
-                                  'onclick': 'window.open("https://'+lang+'.wikipedia.org/wiki/'+txt+'")'
-                                  }).append('Wiki')
+                      $('<a>').attr({
+                                'target': '_blank',
+                                'href': 'https://www.google.com/?#q='+txt
+                                }).append(
+                                $('<img>').attr({
+                                          'class': 'img_apps',
+                                          'src': 'icons/google.png'
+                                          })
+                                ),
+                      $('<a>').attr({
+                                'target': '_blank',
+                                'href': 'https://www.google.com/search?tbm=isch&q='+txt
+                                }).append(
+                                $('<img>').attr({'class': 'img_apps', 'src': 'icons/image.png'})
+                                ),
+                      $('<a>').attr({
+                                'target': '_blank',
+                                'href': 'https://www.google.com/webhp#q='+txt+'&tbm=bks'
+                                }).append(
+                                $('<img>').attr({'class': 'img_apps', 'src': 'icons/books.png'})
+                                ),
+                      $('<a>').attr({
+                                'target': '_blank',
+                                'href': 'http://scholar.google.com/scholar?hl='+lang+'&q='+txt
+                                }).append(
+                                $('<img>').attr({'class': 'img_apps', 'src': 'icons/scholar.png'})
+                                ),
+                      $('<a>').attr({
+                                'target': '_blank',
+                                'href': 'https://www.google.com/webhp#q='+txt+'&tbm=vid'
+                                }).append(
+                                $('<img>').attr({'class': 'img_apps', 'src': 'icons/video.png'})
+                                ),
+                      $('<a>').attr({
+                                'target': '_blank',
+                                'href': 'https://www.google.com/webhp#q='+txt+'&tbm=app'
+                                }).append(
+                                $('<img>').attr({'class': 'img_apps', 'src': 'icons/apps.png'})
+                                ),
+                      $('<a>').attr({
+                                'target': '_blank',
+                                'href': 'https://'+lang+'.wikipedia.org/wiki/'+txt
+                                }).append(
+                                $('<img>').attr({'class': 'img_apps', 'src': 'icons/wiki.png'})
+                                )
                     )
                   );
                   //console.log(data.instance.get_node(data.selected[0]));
@@ -271,8 +281,13 @@
                     'data-target': '#',
                     'href': '/page.html'
                     }).append('Ontology').append(
-                $('<span>').attr({'class': 'caret'})
-                ),
+                  $('<span>').attr({'class': 'caret'})
+                  ),
+                    /*
+                    }).append(
+                      $('<img>').attr({'class': 'logo', 'src': 'icons/r-subject.png'}),
+                      $('<span>').attr({'class': 'caret'})
+                      ),*/
             $('<ul>').attr({
                 'class': 'dropdown-menu multi-level',
                 'id': 'dropdown_multi',
@@ -287,7 +302,11 @@
                   $('<a>').attr({
                           'href':'javascript:;',
                           'tabindex' : "-1"
-                        }).append(langs[langs_r[i]]),
+                        //}).append(langs[langs_r[i]]),
+                          }).append(
+                          $('<img src="icons/'+langs_r[i]+'.png">'),
+                          $('<span id="lang_drop">').append(langs[langs_r[i]])
+                          ),
                   $('<ul class="dropdown-menu" id="dropdown_'+langs_r[i]+'">')
                   )
                 );
