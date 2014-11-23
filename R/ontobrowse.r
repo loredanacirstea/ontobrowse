@@ -1,12 +1,12 @@
-# library(RCurl)
-# x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
-# terms <- read.csv(text = x)
-# y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
-# rels <- read.csv(text = y)
-# z <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/ontologies.csv")
-# ontoList <- read.csv(text = z)
-# s <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv")
-# smp <- read.csv(text = s)
+library(RCurl)
+x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
+terms <- read.csv(text = x)
+y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
+rels <- read.csv(text = y)
+z <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/ontologies.csv")
+ontoList <- read.csv(text = z)
+s <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv")
+smp <- read.csv(text = s)
 
 ancestry <- function(terms, rels, term, lang, origin, returnIds = TRUE) {
   path = term
