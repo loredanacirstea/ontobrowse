@@ -50,9 +50,8 @@
                           'aria-labelledby': 'dropdown_children'
                           })
             );
-
           for(i in n["children"]){
-              $('#dropdown_kids').append(
+              $('#dropdown_children_ul').append(
                   $('<li>').attr({'role': 'presentation'}).append(
                       $('<a>').attr({
                                       'role': 'menuitem',
@@ -61,6 +60,14 @@
                                       }).append(n["children"][i][1])
                   )
               );
+              var req2 = ocpu.rpc("ontobrowse",{
+                                    'term': id,
+                                    'lang': lang,
+                                    'origin': origin
+                                    }, function(k){
+                  
+              }
+
           }
 
       });
@@ -74,6 +81,7 @@
                                 'lang': lang,
                                 'origin': origin
                                 }, function(output){
+
           var n = output;
           $("#dropdown_tool_path").append(
             $('<button>').attr({
@@ -92,15 +100,16 @@
                           'aria-labelledby': 'dropdown_path'
                           })
             );
+          var ids = Object.keys(n);
 
-          for(i=1; i<n.length; i++){
+          for(i=1; i<ids.length; i++){
               $('#dropdown_path_ul').append(
                   $('<li>').attr({'role': 'presentation'}).append(
                       $('<a>').attr({
                                       'role': 'menuitem',
                                       'tabindex': '-1',
                                       'href': '#'
-                                      }).append(n[i])
+                                      }).append(n[ids[i]])
                   )
               );
           }
