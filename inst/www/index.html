@@ -136,11 +136,16 @@
 
                     for(i in langs){
                       //console.log(output[langs[i]]);
+                        if(langs[i] != "t"){
+                          var src = 'icons/'+langs[i]+'.png';
+                        } else {
+                          var src = 'icons/ids.png';
+                        }
                         $('#translations').append(
                             $('<tr>').append(
                                 $('<td>').append(
                                     $('<img>').attr({
-                                                'src': 'icons/'+langs[i]+'.png',
+                                                'src': src,
                                                 'data-toggle': 'tooltip',
                                                 'data-placement': 'left',
                                                 'title': languages[langs[i]]
@@ -364,13 +369,18 @@
           );
    
           for(var i in langs_r){
+              if(langs_r[i] != "t"){
+                var src = 'icons/'+langs_r[i]+'.png';
+              } else{
+                var src = 'icons/ids.png';
+              }
               $("#dropdown_multi").append(
                 $('<li class="dropdown-submenu">').append(
                   $('<a>').attr({
                           'href':'javascript:;',
                           'tabindex' : "-1"
                           }).append(
-                          $('<img src="icons/'+langs_r[i]+'.png">'),
+                          $('<img>').attr({'src': src}),
                           $('<span id="lang_drop">').append(languages[langs_r[i]])
                           ),
                   $('<ul class="dropdown-menu" id="dropdown_'+langs_r[i]+'">')
