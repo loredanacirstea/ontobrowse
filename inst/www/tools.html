@@ -32,7 +32,7 @@
                                     'lang': lang,
                                     'origin': origin
                                     }, function(output){
-          var n = output.message;
+          var n = output;
           $("#dropdown_tool_kids").append(
             $('<button>').attr({
                     'id': 'dropdown_children',
@@ -57,7 +57,7 @@
                                       'role': 'menuitem',
                                       'tabindex': '-1',
                                       'href': '#'
-                                      }).append(n["children"][i][1])
+                                      }).append(n["children"][i]["name"])
                   )
               );
 
@@ -114,6 +114,49 @@
       req.fail(function(){
           alert("Server error: " + request.responseText);
       });
+/*
+      var request2 = ocpu.rpc("tree",{
+                                    'term': id,
+                                    'lang': lang,
+                                    'origin': origin
+                                    }, function(output){
+          var n = output;
+          $("#dropdown_tool_tree").append(
+            $('<button>').attr({
+                    'id': 'dropdown_tree',
+                    'type': 'button',
+                    'data-toggle': 'dropdown',
+                    'class': 'btn btn-default dropdown-toggle',
+                    'aria-expanded': 'true'
+                    }).append(n["name"]).append(
+                  $('<span>').attr({'class': 'caret'})
+                  ),
+            $('<ul>').attr({
+                          'id': 'dropdown_tree_ul',
+                          'class': 'dropdown-menu',
+                          'role': 'menu',
+                          'aria-labelledby': 'dropdown_tree'
+                          })
+            );
+          for(i in n["children"]){
+              $('#dropdown_tree_ul').append(
+                  $('<li>').attr({'role': 'presentation'}).append(
+                      $('<a>').attr({
+                                      'role': 'menuitem',
+                                      'tabindex': '-1',
+                                      'href': '#'
+                                      }).append(n["children"][i]["name"])
+                  )
+              );
+
+          }
+
+      });
+
+      request2.fail(function(){
+          alert("Server error: " + request2.responseText);
+      });
+*.
 
     </script>
   </head>
@@ -125,6 +168,8 @@
               <div class="dropdown" id="dropdown_tool_kids">
               </div>
               <div class="dropdown" id="dropdown_tool_path">
+              </div>
+              <div class="dropdown" id="dropdown_tool_tree">
               </div>
 
         </div>

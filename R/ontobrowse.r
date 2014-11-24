@@ -6,6 +6,7 @@
 #"https://raw.githubusercontent.com/ctzurcanu/smp/master/data/ontologies.csv"
 #smp
 #"https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv"
+
 library(RCurl)
 x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
 terms <- read.csv(text = x)
@@ -186,12 +187,14 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
 #   }
   kids <- children(terms, rels, term, lang)
   if(length(kids) > 0) {
+    list[["haschildren"]] <- length(kids)
     for(i in 1:(length(kids))){
       name <- as.character(terms[terms$term_id == kids[i] & terms$lang == lang, "term"])
       temp <- list()
       temp[["id"]] <- kids[i]
       temp[["name"]] <- name
       temp[["children"]] <- (length(children(terms, rels, kids[i], lang))>0)
+      temp[["haschildren"]] <- length(children(terms, rels, kids[i], lang))
       list[["children"]][[i]] <- temp
     }
   }
