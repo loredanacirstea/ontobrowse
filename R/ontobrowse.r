@@ -224,10 +224,16 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
 #' @examples
 #' tree()
 #' 
-tree <- function(term=9000, lang="la", origin = 9000){
+tree <- function(term=9000, lang="la", origin = 9000, unlist=TRUE){
   list <- ontobrowse(term, lang, origin)
   list <- tree_recursive(term, lang, origin, list)
-  list
+  if(unlist == TRUE){
+    result = unlist(list, use.names= FALSE)
+  }
+  else{
+    result = list
+  }
+  result
 }
 
 tree_recursive <- function(term, lang, origin, list){
