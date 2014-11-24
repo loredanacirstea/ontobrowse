@@ -86,7 +86,7 @@ init <- function(url){
 #' @param returnIds Return IDs or terms in the provided language. Default: FALSE
 #' path()
 #' 
-path <- function(terms=terms, rels=rels, term, lang="la", origin=9000){
+path <- function(term, lang="la", origin=9000){
   ids <- ancestry(terms, rels, term, lang, origin)
   result <- list()
   for(id in ids){
@@ -102,7 +102,7 @@ path <- function(terms=terms, rels=rels, term, lang="la", origin=9000){
 #' @param term Give a term ID
 #' translations()
 #' 
-translations <- function(terms=terms, term){
+translations <- function(term){
     transl <- terms[terms$term_id == term,]
     translations <- list()
     for(row in row.names(transl)){
@@ -118,7 +118,7 @@ translations <- function(terms=terms, term){
 #' @param term Give a term ID
 #' smp_api()
 #' 
-smp_api <- function(smp=smp, term){
+smp_api <- function(term){
   api<- list()
   api[["x_med"]] <- as.character(unique(smp[smp$term_id == term & smp$x_med != 0, "x_med"]))
   api[["x_min"]] <- as.character(unique(smp[smp$term_id == term & smp$x_min != 0, "x_min"]))
@@ -133,7 +133,7 @@ smp_api <- function(smp=smp, term){
 #' @param ontoList Data frame of ontologies details. See https://raw.githubusercontent.com/ctzurcanu/smp/master/data/ontologies.csv
 #' ontologies()
 #' 
-ontologies <- function(ontoList=ontoList){
+ontologies <- function(){
   langs <- levels(ontoList$lang)
   data <- list()
   for(lang in langs){
@@ -165,7 +165,7 @@ ontologies <- function(ontoList=ontoList){
 #' @examples
 #' ontobrowse()
 #' 
-ontobrowse <- function(terms=terms, rels=rels, term=9000, lang="la", origin = 9000){
+ontobrowse <- function(term=9000, lang="la", origin = 9000){
   term = as.integer(term)
   origin = as.integer(origin)
   list <- list()
@@ -221,17 +221,17 @@ ontobrowse <- function(terms=terms, rels=rels, term=9000, lang="la", origin = 90
 #' @examples
 #' tree()
 #' 
-tree <- function(terms=terms, rels=rels, term=9000, lang="la", origin = 9000){
-  list <- ontobrowse(terms, rels, term, lang, origin)
-  list <- tree_recursive(terms, rels, term, lang, origin, list)
+tree <- function(term=9000, lang="la", origin = 9000){
+  list <- ontobrowse(term, lang, origin)
+  list <- tree_recursive(term, lang, origin, list)
   list
 }
 
-tree_recursive <- function(terms=terms, rels=rels, term, lang, origin, list){
+tree_recursive <- function(term, lang, origin, list){
   for(kid in 1: length(list[["children"]])){
     if(list[["children"]][[kid]][["children"]] == TRUE){
-        list[["children"]][[kid]] <- ontobrowse(terms, rels, list[["children"]][[kid]][["id"]], lang, origin)
-        list[["children"]][[kid]] <- tree_recursive(terms, rels, list[["children"]][[kid]][["id"]], lang, origin, list[["children"]][[kid]])      
+        list[["children"]][[kid]] <- ontobrowse(list[["children"]][[kid]][["id"]], lang, origin)
+        list[["children"]][[kid]] <- tree_recursive(list[["children"]][[kid]][["id"]], lang, origin, list[["children"]][[kid]])      
     }
   }
   list
