@@ -1,12 +1,11 @@
-library(RCurl)
-x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
-terms <- read.csv(text = x)
-y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
-rels <- read.csv(text = y)
-z <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/ontologies.csv")
-ontoList <- read.csv(text = z)
-s <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv")
-smp <- read.csv(text = s)
+#terms
+#"https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv"
+#rels
+#"https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv"
+#ontoList
+#"https://raw.githubusercontent.com/ctzurcanu/smp/master/data/ontologies.csv"
+#smp
+#"https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv"
 
 ancestry <- function(terms, rels, term, lang, origin, returnIds = TRUE) {
   path = term
@@ -53,16 +52,32 @@ siblings <- function(terms, rels, term, lang, returnIds = TRUE) {
   return(sibs);
 }
 
+#' Init returns the .csv file from the provided url as an R data frame.
+#'
+#' This function returns the .csv file from the provided url as an R data frame.
+#' @param url Provide an url (string) for a .csv file. 
+#' init()
+#' 
+init <- function(url){
+  library(RCurl)
+  x <- getURL(url)
+  table <- read.csv(text = x)
+  table
+}
+
+
 #' Path shows the ancestry path from the root of the ontology to the given term ID. Does not support multiple inheritance now.
 #'
 #' This function outputs a list: key = ID, value = terms in the language provided. Order: term ->...-> ontology root(origin)
+#' @param terms Data frame of terms.
+#' @param rels Data frame of relations between terms.
 #' @param term Give a term ID. 
 #' @param lang Give a language. Default: "la"
 #' @param origin Give an origin. Default: 9000
 #' @param returnIds Return IDs or terms in the provided language. Default: FALSE
 #' path()
 #' 
-path <- function(term, lang="la", origin=9000){
+path <- function(terms, rels, term, lang="la", origin=9000){
   ids <- ancestry(terms, rels, term, lang, origin)
   result <- list()
   for(id in ids){
@@ -74,10 +89,11 @@ path <- function(term, lang="la", origin=9000){
 #' Translations gives all the translations found in the ontologies, for a term ID
 #'
 #' This function outputs a list with key = language (ex."la","en" etc.) and value = translation
+#' @param terms Data frame of terms.
 #' @param term Give a term ID
 #' translations()
 #' 
-translations <- function(term){
+translations <- function(terms, term){
     transl <- terms[terms$term_id == term,]
     translations <- list()
     for(row in row.names(transl)){
@@ -89,10 +105,11 @@ translations <- function(term){
 #' Sapiens Mapping API allows accessing anatomy elements from the 2D atlas by id
 #'
 #' This function outputs the SMP color used for the element and the minimum, maximum and intermediary values for the slices in which the element is present.
+#' @param smp Sapiens Mapping API data frame from https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv
 #' @param term Give a term ID
 #' smp_api()
 #' 
-smp_api <- function(term){
+smp_api <- function(smp, term){
   api<- list()
   api[["x_med"]] <- as.character(unique(smp[smp$term_id == term & smp$x_med != 0, "x_med"]))
   api[["x_min"]] <- as.character(unique(smp[smp$term_id == term & smp$x_min != 0, "x_min"]))
@@ -104,10 +121,10 @@ smp_api <- function(term){
 #' Ontologies helps you browse your ontologies
 #'
 #' This function allows you to see what ontologies are available.
-#' no param
+#' @param ontoList Data frame of ontologies details. See https://raw.githubusercontent.com/ctzurcanu/smp/master/data/ontologies.csv
 #' ontologies()
 #' 
-ontologies <- function(){
+ontologies <- function(ontoList){
   langs <- levels(ontoList$lang)
   data <- list()
   for(lang in langs){
@@ -126,9 +143,11 @@ ontologies <- function(){
   data
 }
 
-#' Ontobrowse helps you browse your ontology
+#' Ontobrowse helps you browse your ontology by term.
 #'
-#' This function allows you browse an ontology by id.
+#' This function allows you browse an ontology by id. Returns a list with keys: id, name, children (for that term).
+#' @param terms Data frame of terms.
+#' @param rels Data frame of relations between terms.
 #' @param term Give a term_id. Defaults to 9000 (Terminologia Morphologica).
 #' @param lang Give a display language (la=Latin, en=English, ro=Romanian). Defaults to "la" (Latin).
 #' @param origin Give a term_id for the origin. Defaults to 9000 (Terminologia Morphologica).
@@ -137,7 +156,7 @@ ontologies <- function(){
 #' @examples
 #' ontobrowse()
 #' 
-ontobrowse <- function(term=9000, lang="la", origin = 9000){
+ontobrowse <- function(terms, rels, term=9000, lang="la", origin = 9000){
   term = as.integer(term)
   origin = as.integer(origin)
   list <- list()
@@ -160,10 +179,10 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
   if(length(kids) > 0) {
     for(i in 1:(length(kids))){
       name <- as.character(terms[terms$term_id == kids[i] & terms$lang == lang, "term"])
-      temp <- c()
-      temp["id"] <- kids[i]
-      temp["name"] <- name
-      temp["haschildren"] <- (length(children(terms, rels, kids[i], lang))>0)
+      temp <- list()
+      temp[["id"]] <- kids[i]
+      temp[["name"]] <- name
+      temp[["children"]] <- (length(children(terms, rels, kids[i], lang))>0)
       list[["children"]][[i]] <- temp
     }
   }
@@ -177,5 +196,34 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
 #       list[["siblings"]][[i]] <- temp
 #     }
 #   }
-  list(message = list)
+  list
+}
+
+#' Tree helps you browse your ontology from the id provided
+#'
+#' This function allows you browse an ontology from the origin id provided. Returns a multilevel list with keys: id, name, children (recursive, with id, name, children for the subchildren).
+#' @param terms Data frame of terms.
+#' @param rels Data frame of relations between terms.
+#' @param term Give a term_id. Defaults to 9000 (Terminologia Morphologica).
+#' @param lang Give a display language (la=Latin, en=English, ro=Romanian). Defaults to "la" (Latin).
+#' @param origin Give a term_id for the origin. Defaults to 9000 (Terminologia Morphologica).
+#' @keywords ontology
+#' @export
+#' @examples
+#' tree()
+#' 
+tree <- function(terms, rels, term=9000, lang="la", origin = 9000){
+  list <- ontobrowse(terms, rels, term, lang, origin)
+  list <- tree_recursive(terms, rels, term, lang, origin, list)
+  list
+}
+
+tree_recursive <- function(terms, rels, term, lang, origin, list){
+  for(kid in 1: length(list[["children"]])){
+    if(list[["children"]][[kid]][["children"]] == TRUE){
+        list[["children"]][[kid]] <- ontobrowse(terms, rels, list[["children"]][[kid]][["id"]], lang, origin)
+        list[["children"]][[kid]] <- tree_recursive(terms, rels, list[["children"]][[kid]][["id"]], lang, origin, list[["children"]][[kid]])      
+    }
+  }
+  list
 }
