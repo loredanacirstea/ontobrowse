@@ -173,6 +173,7 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
   list[["id"]] <- term
   list[["name"]] <- as.character(terms[terms$term_id == term & terms$lang == lang, "term"])[1]
   #list[["ancestry"]] <- list()
+  list[["haschildren"]] <- 0
   list[["children"]] <- list()
   #list[["siblings"]] <- list()
 #   parents <- ancestry(terms, rels, term, lang, origin)
@@ -186,15 +187,15 @@ ontobrowse <- function(term=9000, lang="la", origin = 9000){
 #     }
 #   }
   kids <- children(terms, rels, term, lang)
+  list[["haschildren"]] <- length(kids)
   if(length(kids) > 0) {
-    list[["haschildren"]] <- length(kids)
     for(i in 1:(length(kids))){
       name <- as.character(terms[terms$term_id == kids[i] & terms$lang == lang, "term"])
       temp <- list()
       temp[["id"]] <- kids[i]
       temp[["name"]] <- name
-      temp[["children"]] <- (length(children(terms, rels, kids[i], lang))>0)
       temp[["haschildren"]] <- length(children(terms, rels, kids[i], lang))
+      temp[["children"]] <- (length(children(terms, rels, kids[i], lang))>0)
       list[["children"]][[i]] <- temp
     }
   }
