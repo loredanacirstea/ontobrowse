@@ -6,11 +6,13 @@
     <!-- Include order: first jquery, then opencpu.js, and then your code -->
     <script src="opencpu/jquery-1.10.2.min.js"></script>
     <script src="opencpu/opencpu-0.4.js"></script>
-    <script src="dist/jstree.min.js"></script> 
+    <script src="dist/jstree.min.js"></script>
+    <script type="text/javascript" src="js/tinymce/tinymce.min.js"></script>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/tools.css" />
 
     <script>
+      /*
       var vars = [], hash;
       var q = document.URL.split('?')[1];
       if(q != undefined){
@@ -24,6 +26,26 @@
       var id = vars["id"];
       var lang = vars["lang"];
       var origin = vars["origin"];
+      */
+
+      var urlParams;
+      (window.onpopstate = function () {
+          var match,
+              pl     = /\+/g,  // Regex for replacing addition symbol with a space
+              search = /([^&=]+)=?([^&]*)/g,
+              decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+              query  = window.location.search.substring(1);
+
+          urlParams = {};
+          while (match = search.exec(query))
+             urlParams[decode(match[1])] = decode(match[2]);
+      })();
+
+      var id = urlParams["id"];
+      var lang = urlParams["lang"];
+      var origin = urlParams["origin"];
+
+      
       var languages = {
             "la" :"Latin",
             "en" : "English",
@@ -32,10 +54,24 @@
             "ro" : "Romanian",
             "t" : "FIPAT ids"
           }
-      //alert(id+' '+' '+lang+' '+origin);
-      //console.log(id);
-   
 
+      function add_term(id, term){
+        //console.log(id);
+        //console.log(term);
+        var $body = $(tinymce.activeEditor.getBody());
+        $body.find('p:last').append('<span class="T '+id+'" style="font-weight: bold;" data-mce-style="font-weight: bold;">'+term+'</span>').append(document.createTextNode( "&nbsp;" ));
+        //$body.find('p:last').append(" ");
+      }
+                      
+/*
+                      'class': 'T '+id,
+                      'style': 'font-weight: bold;',
+                      'data-mce-style': 'font-weight: bold;'
+                    }).append(term)
+          );
+        $body.append('<p>" "</p>');
+      }
+*/
       $('#dropdown_tool_kids').html('');
       $('#dropdown_tool_path').html('');
       $('#dropdown_tool_tree').html('');
@@ -70,7 +106,7 @@
                       $('<a>').attr({
                                       'role': 'menuitem',
                                       'tabindex': '-1',
-                                      'href': '#'
+                                      'href': 'javascript:;'
                                       }).append('No children')
                   )
               );
@@ -82,7 +118,9 @@
                         $('<a>').attr({
                                         'role': 'menuitem',
                                         'tabindex': '-1',
-                                        'href': '#'
+                                        'href': 'javascript:;',
+                                        'onclick': 'add_term("'+n["children"][i]["id"]+
+                                                    '","'+n["children"][i]["name"]+'")'
                                         }).append(n["children"][i]["name"])
                     )
                 );
@@ -127,7 +165,7 @@
                       $('<a>').attr({
                                       'role': 'menuitem',
                                       'tabindex': '-1',
-                                      'href': '#'
+                                      'href': 'javascript:;'
                                       }).append('This is the root')
                   )
               );
@@ -138,7 +176,9 @@
                           $('<a>').attr({
                                           'role': 'menuitem',
                                           'tabindex': '-1',
-                                          'href': '#'
+                                          'href': 'javascript:;',
+                                          'onclick': 'add_term("'+ids[i]+
+                                                    '","'+n[ids[i]]+'")'
                                           }).append(n[ids[i]])
                       )
                   );
@@ -183,74 +223,73 @@
                       $('<a>').attr({
                                       'role': 'menuitem',
                                       'tabindex': '-1',
-                                      'href': '#'
+                                      'href': 'javascript:;'
                                       }).append('No children')
                   )
               );
           } else{
-              console.log(n);
-              //var space = [""];
-              var no = [parseInt(n[2],10)];
-              var not = 0;
-              var j = 3;
-              for(var i = 4; i < n.length; i=i+j){
-                  //console.log(space[not]+n[i]);
-                  //console.log(space);
-                  console.log(no);
-                  
-                  if(no.length > 1){ 
-                    var space =  new Array(no.length).join("+");
-                  } else{ var space = "";}
-                  
-                  console.log(space+n[i]);
-
-                  $('#dropdown_tree_ul').append(
+                var ord = [parseInt(n[2],10)];
+                var no = 1;
+                var j = 3;
+                for(var i = 4; i < n.length; i=i+j){
+                    if(ord.length > 1){ 
+                        var space =  new Array(ord.length).join("&nbsp;:&nbsp;");
+                    } else{ var space = "";}
+                    
+                    $('#dropdown_tree_ul').append(
                       $('<li>').attr({'role': 'presentation'}).append(
                           $('<a>').attr({
                                           'role': 'menuitem',
                                           'tabindex': '-1',
-                                          'href': '#'
-                                          //}).append(space[not]+n[i])
+                                          'href': 'javascript:;',
+                                          'onclick': 'add_term("'+n[i-1]+
+                                                    '","'+n[i]+'")'
                                           }).append(space+n[i])
                       )
-                  );
-                  if(n[i+1] != "0"){
-                    j = 3;
-                    //space.push(space[not]+"_");
-                    if(no[no.length-1] <= 1){
-                      no.splice(no.length-1, 1);
-                    }else{
-                      no[no.length-1] = no[no.length-1] -1;
-                    }
-                    no.push(parseInt(n[i+1],10));
-                    not = not+1;
-                  }
-                  else{
-                    j = 4;
-                    if(no[no.length-1] > 1){
-                      //space.push(space[not]);
-                      no[no.length-1] = no[no.length-1] -1;
-                    } else {
-                      //console.log(space[not]);
-                      //space.push(space[not].substring(0,space[not].length-1));
-                      no.splice(no.length-1, 1);
-                      //no[no.length-1] = no[no.length-1] -1;
-                    }
-                     
-                    not = not+1;
-                  }
-                  console.log(no);
-                  console.log('Not: '+not);
-                  if(not > 50){break;}
-                  
-              }
-            }
+                    );
 
+                    ord[ord.length-1] = ord[ord.length-1] - 1;
+                    
+                    var ind = 1;
+                    while(isNaN(parseInt(n[i+ind],10))){
+                      ind = ind + 1;
+                    }
+                    if(n[i+ind] != "0"){
+                        j = 3 + ind - 1;
+                        ord.push(parseInt(n[i+ind],10));
+                    }
+                    else{
+                      j = 4 + ind - 1;
+                    }
+                    for(var k = ord.length-1; k > 0 ; k--){
+                        if(ord[k]<1){
+                          ord.splice(k, 1);
+                        }
+                        else break;
+                      }
+                    no = no + 1;
+                    if(no > 200){
+                      $('#dropdown_tree_ul').append(
+                        $('<li>').attr({'role': 'presentation'}).append(
+                            $('<a>').attr({
+                                            'role': 'menuitem',
+                                            'tabindex': '-1',
+                                            'href': 'javascript:;'
+                                            //}).append(space[not]+n[i])
+                                            }).append('> 200')
+                        )
+                      );
+                    break;
+                    }
+                }
+            }
       });
 
       request2.fail(function(){
           alert("Server error: " + request2.responseText);
       });
+
+//translation dropdown
 
       var request3 = ocpu.rpc("translations",{'term': id}, function(output){
 
@@ -294,7 +333,9 @@
                               $('<a>').attr({
                                       'role': 'menuitem',
                                       'tabindex': '-1',
-                                      'href': 'javascript:;'
+                                      'href': 'javascript:;',
+                                      'onclick': 'add_term("'+id+
+                                                    '","'+output[langs[i]]+'")'
                                       }).append(
                                       $('<img>').attr({
                                                       'src': src,
@@ -365,6 +406,76 @@
 
 
     </script>
+
+    <script type="text/javascript">
+    function copyit(){
+        $("#lab").html($("#tinymce").html())
+        alert($("#content_ifr").contents().find("#tinymce").html())
+    }
+
+    function blend(){
+       // $(".T").css("fontWeight", "normal")
+       // $(".ref").remove()
+       $("#content_ifr").contents().find(".T").css("fontWeight", "normal")
+       $("#content_ifr").contents().find(".ref").remove()
+    }
+    function bold(){
+        $("#content_ifr").contents().find(".T").css("fontWeight", "bold")
+        //alert("hgh")
+    }
+    function check(lang, constr, refs){
+        var terms = $("#content_ifr").contents().find(".T");
+        var ids = []
+        var iids =[]
+        terms.each(function(index){
+            $($(this).attr('class').split(' ')).each(function(i) { 
+                if (this[0] !== 'T') {
+                    ids[terms[index]] = this;
+                    iids.push(this)
+                    //alert(this)
+                    $.getJSON("../../smp/get_term.php?id="+this, function( data ) {
+                        console.log(data)
+                        if (constr) {
+                            if ($(terms[index]).html() == data[lang]) {
+                                $el=$("")
+                            } else {
+                                $el = $('<span class="incorrect">'+$(terms[index]).html()+"</span> ")
+                            }
+                            $(terms[index]).html( "").append($el).append(" "+data[lang])
+                        } else {
+                            $(terms[index]).html( "").append(data[lang])
+                        }
+                        
+                        if (refs) {
+                            $el = $('<a href="http://sliced.ro/smp/ta.php?ta='+data['taid']+'"  class="ref" target="_new"><img src="fwd.png" /></a>')
+                            $(terms[index]).append($el)
+                        }
+                    });
+                }    
+            });
+        })
+        console.log(iids)
+    }
+    
+
+    tinymce.init({
+        selector: "textarea",
+        theme: "modern",
+        plugins: [
+            "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+            "searchreplace wordcount visualblocks visualchars code fullscreen",
+            "insertdatetime media nonbreaking save table contextmenu directionality",
+            "emoticons template paste textcolor smp"
+        ],
+        toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+        toolbar2: "print preview media | forecolor backcolor emoticons",
+        image_advtab: true,
+        templates: [
+            {title: 'Test template 1', content: 'Test 1'},
+            {title: 'Test template 2', content: 'Test 2'}
+        ]
+    });
+</script>
   </head>
     
   <body>
@@ -388,8 +499,17 @@
               </div>
             </div>
         </div>
-
-       
+        <div class="row">
+          <div class="writing_tool">
+            <form method="post" action="somepage">
+                <textarea name="content" id="content" style="width:100%"><p>The <span class="T 4297" style="font-weight: bold;">Femoral artery</span> is a large <span class="T 3527" style="font-weight: bold;">Artery</span> in the <span class="T 82" style="font-weight: bold;">Thigh</span>. It is a continuation of the <span class="T 4289" style="font-weight: bold;">External iliac artery</span> and begins at the <span class="T 1885" style="font-weight: bold;">Inguinal canal</span>.</p></textarea>
+            </form>
+            <div id="lab"></div>
+            Insert controlled vocabulary terms using Insert/Controlled Phrase menu. Only Terminologia Anatomica terms at the moment :)
+            <a href="#" onclick="check('en', true)">Check</a> correctiveness. <a href="#" onclick="check('en',false)">Update</a> terms. <a href="#" onclick="check('la',false)">Translate</a> terms in Latin (or any other provided language). <a href="#" onclick="check('en',false,true)">Show</a> refs. <a href="#" onclick="blend()">Blend</a> in text. <a href="#" onclick="bold()">Bold</a> the terms. </p>
+          </div>
+        </div>
+        <p id="test"></p>
     </div>
     <script src="bootstrap/js/bootstrap.min.js"></script>
   </body>
