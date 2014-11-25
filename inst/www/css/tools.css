@@ -1,3 +1,36 @@
-.row{
-    display: flex;
+.container{
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+.tools{
+    display: block;
+}
+.scrollable-menu{
+    height: auto;
+    max-height: 300px;
+    overflow-x: hidden;
+}
+img{
+    height: 20px;
+}
+#dropdown_transl_ul>li{
+	display: list-item;
+}
+#lang_drop{
+    padding-left: 10px;
+}
+.extra{
+	position: fixed;
+    right: 0;
+    top: 0;
+    min-height: 100px;
+    min-width: 100px;
+    margin-left: 1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px;
+    border-radius: 0 6px 6px 6px;
+}
+#dropdown_lang_ul{
+	left: -35px;
 }

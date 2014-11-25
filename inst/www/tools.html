@@ -24,8 +24,21 @@
       var id = vars["id"];
       var lang = vars["lang"];
       var origin = vars["origin"];
+      var languages = {
+            "la" :"Latin",
+            "en" : "English",
+            "es" : "Spanish",
+            "jp" : "Japanese",
+            "ro" : "Romanian",
+            "t" : "FIPAT ids"
+          }
       //alert(id+' '+' '+lang+' '+origin);
       //console.log(id);
+   
+
+      $('#dropdown_tool_kids').html('');
+      $('#dropdown_tool_path').html('');
+      $('#dropdown_tool_tree').html('');
 
       var request = ocpu.rpc("ontobrowse",{
                                     'term': id,
@@ -45,22 +58,36 @@
                   ),
             $('<ul>').attr({
                           'id': 'dropdown_children_ul',
-                          'class': 'dropdown-menu',
+                          'class': 'dropdown-menu scrollable-menu',
                           'role': 'menu',
                           'aria-labelledby': 'dropdown_children'
                           })
             );
-          for(i in n["children"]){
+          
+          if(n["children"].length == 0){
               $('#dropdown_children_ul').append(
                   $('<li>').attr({'role': 'presentation'}).append(
                       $('<a>').attr({
                                       'role': 'menuitem',
                                       'tabindex': '-1',
                                       'href': '#'
-                                      }).append(n["children"][i]["name"])
+                                      }).append('No children')
                   )
               );
+          }
+          else{
+            for(i in n["children"]){
+                $('#dropdown_children_ul').append(
+                    $('<li>').attr({'role': 'presentation'}).append(
+                        $('<a>').attr({
+                                        'role': 'menuitem',
+                                        'tabindex': '-1',
+                                        'href': '#'
+                                        }).append(n["children"][i]["name"])
+                    )
+                );
 
+            }
           }
 
       });
@@ -88,24 +115,35 @@
                   ),
             $('<ul>').attr({
                           'id': 'dropdown_path_ul',
-                          'class': 'dropdown-menu',
+                          'class': 'dropdown-menu scrollable-menu',
                           'role': 'menu',
                           'aria-labelledby': 'dropdown_path'
                           })
             );
           var ids = Object.keys(n);
-
-          for(i=1; i<ids.length; i++){
+          if(ids.length == 1){
               $('#dropdown_path_ul').append(
                   $('<li>').attr({'role': 'presentation'}).append(
                       $('<a>').attr({
                                       'role': 'menuitem',
                                       'tabindex': '-1',
                                       'href': '#'
-                                      }).append(n[ids[i]])
+                                      }).append('This is the root')
                   )
               );
-          }
+          } else{
+              for(i=1; i<ids.length; i++){
+                  $('#dropdown_path_ul').append(
+                      $('<li>').attr({'role': 'presentation'}).append(
+                          $('<a>').attr({
+                                          'role': 'menuitem',
+                                          'tabindex': '-1',
+                                          'href': '#'
+                                          }).append(n[ids[i]])
+                      )
+                  );
+              }
+            }
                   
 
 
@@ -114,13 +152,14 @@
       req.fail(function(){
           alert("Server error: " + request.responseText);
       });
-/*
+
       var request2 = ocpu.rpc("tree",{
                                     'term': id,
                                     'lang': lang,
                                     'origin': origin
                                     }, function(output){
           var n = output;
+          //console.log(n);
           $("#dropdown_tool_tree").append(
             $('<button>').attr({
                     'id': 'dropdown_tree',
@@ -128,35 +167,202 @@
                     'data-toggle': 'dropdown',
                     'class': 'btn btn-default dropdown-toggle',
                     'aria-expanded': 'true'
-                    }).append(n["name"]).append(
+                    }).append(n[1]).append(
                   $('<span>').attr({'class': 'caret'})
                   ),
             $('<ul>').attr({
                           'id': 'dropdown_tree_ul',
-                          'class': 'dropdown-menu',
+                          'class': 'dropdown-menu scrollable-menu',
                           'role': 'menu',
                           'aria-labelledby': 'dropdown_tree'
                           })
             );
-          for(i in n["children"]){
+          if(n[2] == '0'){
               $('#dropdown_tree_ul').append(
                   $('<li>').attr({'role': 'presentation'}).append(
                       $('<a>').attr({
                                       'role': 'menuitem',
                                       'tabindex': '-1',
                                       'href': '#'
-                                      }).append(n["children"][i]["name"])
+                                      }).append('No children')
                   )
               );
+          } else{
+              console.log(n);
+              //var space = [""];
+              var no = [parseInt(n[2],10)];
+              var not = 0;
+              var j = 3;
+              for(var i = 4; i < n.length; i=i+j){
+                  //console.log(space[not]+n[i]);
+                  //console.log(space);
+                  console.log(no);
+                  
+                  if(no.length > 1){ 
+                    var space =  new Array(no.length).join("+");
+                  } else{ var space = "";}
+                  
+                  console.log(space+n[i]);
 
-          }
+                  $('#dropdown_tree_ul').append(
+                      $('<li>').attr({'role': 'presentation'}).append(
+                          $('<a>').attr({
+                                          'role': 'menuitem',
+                                          'tabindex': '-1',
+                                          'href': '#'
+                                          //}).append(space[not]+n[i])
+                                          }).append(space+n[i])
+                      )
+                  );
+                  if(n[i+1] != "0"){
+                    j = 3;
+                    //space.push(space[not]+"_");
+                    if(no[no.length-1] <= 1){
+                      no.splice(no.length-1, 1);
+                    }else{
+                      no[no.length-1] = no[no.length-1] -1;
+                    }
+                    no.push(parseInt(n[i+1],10));
+                    not = not+1;
+                  }
+                  else{
+                    j = 4;
+                    if(no[no.length-1] > 1){
+                      //space.push(space[not]);
+                      no[no.length-1] = no[no.length-1] -1;
+                    } else {
+                      //console.log(space[not]);
+                      //space.push(space[not].substring(0,space[not].length-1));
+                      no.splice(no.length-1, 1);
+                      //no[no.length-1] = no[no.length-1] -1;
+                    }
+                     
+                    not = not+1;
+                  }
+                  console.log(no);
+                  console.log('Not: '+not);
+                  if(not > 50){break;}
+                  
+              }
+            }
 
       });
 
       request2.fail(function(){
           alert("Server error: " + request2.responseText);
       });
-*.
+
+      var request3 = ocpu.rpc("translations",{'term': id}, function(output){
+
+            var langs = Object.keys(output);
+            
+            $("#dropdown_tool_transl").append(
+                            $('<button>').attr({
+                                    'id': 'dropdown_transl',
+                                    'type': 'button',
+                                    'data-toggle': 'dropdown',
+                                    'class': 'btn btn-default dropdown-toggle',
+                                    'aria-expanded': 'true'
+                                    }).append(
+                                        $('<img>').attr({
+                                                      'src': 'icons/'+lang+'.png',
+                                                      'data-toggle': 'tooltip',
+                                                      'data-placement': 'left',
+                                                      'title': languages[lang]
+                                                    }),
+                                        $('<span id="lang_drop">').append(output[lang]).append(
+                                          $('<span>').attr({'class': 'caret'})
+                                        )
+                                    ),
+                            $('<ul>').attr({
+                                          'id': 'dropdown_transl_ul',
+                                          'class': 'dropdown-menu',
+                                          'role': 'menu',
+                                          'aria-labelledby': 'dropdown_transl'
+                                          })
+                            );
+
+            for(i in langs){
+                      //console.log(output[langs[i]]);
+                        if(langs[i] != "t"){
+                          var src = 'icons/'+langs[i]+'.png';
+                        } else {
+                          var src = 'icons/ids.png';
+                        }
+                        $('#dropdown_transl_ul').append(
+                            $('<li>').attr({'role': 'presentation'}).append(
+                              $('<a>').attr({
+                                      'role': 'menuitem',
+                                      'tabindex': '-1',
+                                      'href': 'javascript:;'
+                                      }).append(
+                                      $('<img>').attr({
+                                                      'src': src,
+                                                      'data-toggle': 'tooltip',
+                                                      'data-placement': 'left',
+                                                      'title': languages[langs[i]]
+                                                    }),
+                                      $('<span id="lang_drop">').append(output[langs[i]])
+                                      )
+                            )
+                        );
+            }
+//change language
+
+            $("#dropdown_tool_lang").append(
+            $('<button>').attr({
+                    'id': 'dropdown_lang',
+                    'type': 'button',
+                    'data-toggle': 'dropdown',
+                    'class': 'btn btn-default dropdown-toggle',
+                    'aria-expanded': 'true'
+                    }).append(
+                          $('<img>').attr({'src': 'icons/'+lang+'.png'}),
+                          $('<span id="lang_drop">').append(languages[lang]).append(
+                              $('<span>').attr({'class': 'caret'})
+                          )
+                  ),
+            $('<ul>').attr({
+                          'id': 'dropdown_lang_ul',
+                          'class': 'dropdown-menu scrollable-menu',
+                          'role': 'menu',
+                          'aria-labelledby': 'dropdown_lang'
+                          })
+            );
+          
+          for(i in langs){
+            if(langs[i] != lang){
+              if(langs[i] != "t"){
+                var src = 'icons/'+langs[i]+'.png';
+              } else{
+                var src = 'icons/ids.png';
+              }
+              $('#dropdown_lang_ul').append(
+                  $('<li>').attr({'role': 'presentation'}).append(
+                      $('<a>').attr({
+                                      'role': 'menuitem',
+                                      'tabindex': '-1',
+                                      'href': 'tools.html?id='+id+'&lang='+langs[i]+'&origin='+origin
+                                      }).append(
+                                      //languages[langs[i]]
+                                          $('<img>').attr({'src': src}),
+                                          $('<span id="lang_drop">').append(languages[langs[i]])
+                                        )
+                  )
+              );
+            }
+          }
+
+
+
+      });
+      request3.fail(function(){
+          alert("Server error: " + request3.responseText);
+      });
+
+
+
+
 
     </script>
   </head>
@@ -165,14 +371,25 @@
 
     <div class="container">
         <div class="row">
+          <div class="tools">
               <div class="dropdown" id="dropdown_tool_kids">
               </div>
               <div class="dropdown" id="dropdown_tool_path">
               </div>
               <div class="dropdown" id="dropdown_tool_tree">
               </div>
-
+              <div class="dropdown" id="dropdown_tool_transl">
+              </div>
+          </div>
         </div>
+        <div class="row">
+            <div class="extra">
+              <div class="dropdown" id="dropdown_tool_lang">
+              </div>
+            </div>
+        </div>
+
+       
     </div>
     <script src="bootstrap/js/bootstrap.min.js"></script>
   </body>
