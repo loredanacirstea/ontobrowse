@@ -58,7 +58,7 @@
       }
 */
 
-
+/*
       //recursive tail call optimisation by Irakli Gozalishvili (https://gist.github.com/Gozala/1697037)  with my recursive obj function => array of objects from multilevel list     
           function tco(f) {
               var value;
@@ -78,10 +78,13 @@
           }
 
           var obj = tco(function(list, result) {
+*/
+          function obj(list, result) {
               result.push({
                 'id': list["id"][0],
                 'value': list["name"][0],
-                'label': list["name"][0] 
+                'label': list["name"][0],
+                'kids': list["haschildren"][0]
               })
               if(list["children"][0] != false){
                   for(kid in list["children"]){
@@ -92,7 +95,37 @@
               else{
                 return result;
               }
-          }); //end of recursive function
+          }
+          
+
+          //}); //end of recursive function
+
+      function multilevel_tree(list, id) {
+          //console.log(list);
+          if(list["haschildren"][0] > 0){
+              $(id).append(
+                $('<li class="dropdown-submenu">').append(
+                  $('<a>').attr({
+                          'href':'javascript:;',
+                          'tabindex' : "-1"
+                          }).append(list["name"][0]),
+                  $('<ul class="dropdown-menu" id="dropdown_tree_'+list["id"][0]+'">')
+                  )
+                );
+              for(kid in list["children"])
+                  multilevel_tree(list["children"][kid], '#dropdown_tree_'+list["id"][0]);
+          }
+          else{
+              $(id).append(
+                $('<li>').append(
+                    $('<a>').attr({
+                          'href':'javascript:;',
+                          'tabindex' : "-1"
+                          }).append(list["name"][0])
+                )
+              );
+          }
+      }
 
       $('#dropdown_tool_kids').html('');
       $('#dropdown_tool_path').html('');
@@ -442,17 +475,21 @@
                                     }, function(output){
 
  
-          if(output["haschildren"] != 0){
-            auto_obj = [];
+          auto_obj = [];
+          if(output["haschildren"] != 0){ 
             auto_obj = obj(output, auto_obj);
+            var len = 3;
           }
-          else auto_obj = [{'id': 'novalue', 'value': 'No children', 'label': 'No children'}];
+          else{
+            auto_obj = [{'id': 'novalue', 'value': 'No children', 'label': 'No children'}];
+            var len = 0;
+          }
           
-          console.log(auto_obj);
+          //console.log(auto_obj);
 
           $( "#autocomplete_subject" ).autocomplete({
                 source: auto_obj,
-                minLength: 3, 
+                minLength: len, 
                 html: true,
                 open: function(event, ui) {
                     $(".ui-autocomplete").css("z-index", 1000);
@@ -461,6 +498,43 @@
                   //jQuery("#hiddenISBN").val(ui.item.id);
                 //}
             });
+
+          //multilevel dropdown with tree items
+          $("#dropdown_tool_tree_multi").append(
+            $('<a>').attr({
+                    'id': 'dLabel',
+                    'role': 'button',
+                    'data-toggle': 'dropdown',
+                    'class': 'btn btn-default',
+                    'data-target': '#',
+                    'href': '/page.html'
+                    }).append(output["name"]).append(
+                  $('<span>').attr({'class': 'caret'})
+                  ),
+            $('<ul>').attr({
+                'class': 'dropdown-menu multi-level',
+                'id': 'dropdown_tree_multi',
+                'role': 'menu',
+                'aria-labelledby': 'dLabel'
+            })
+          );
+
+          if(output["haschildren"] == 0){
+            $('#dropdown_tree_multi').append(
+                  $('<li>').attr({'role': 'presentation'}).append(
+                      $('<a>').attr({
+                                      'role': 'menuitem',
+                                      'tabindex': '-1',
+                                      'href': 'javascript:;'
+                                      }).append('No children')
+                  )
+              );
+          }
+          else{
+            for(kid in output["children"])
+              multilevel_tree(output["children"][kid], '#dropdown_tree_multi');
+          }
+
       });
       request4.fail(function(){
           alert("Server error: " + request4.responseText);
@@ -547,6 +621,7 @@
     <div class="container-fluid">
         <div class="row">
           <div class="col-md-4">
+            </br></br>
             <div class="tools">
                 <div class="dropdown" id="dropdown_tool_kids">
                 </div>
@@ -554,12 +629,22 @@
                 </div>
                 <div class="dropdown" id="dropdown_tool_tree">
                 </div>
+                <div class="dropdown" id="dropdown_tool_tree_multi">
+                </div>
                 <div class="dropdown" id="dropdown_tool_transl">
                 </div>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="autocomplete_line left">Search: <input type="text" id="autocomplete_subject">
+            <div clas="search">
+                <div class="choose_output">
+                </div>
+                <div class="autocomplete_line left">Search: <input type="text" id="autocomplete_kids">
+                </div>
+                <div class="autocomplete_line left">Search: <input type="text" id="autocomplete_path">
+                </div>
+                <div class="autocomplete_line left">Search: <input type="text" id="autocomplete_subject">
+                </div>
             </div>
           </div>
         </div>
@@ -579,7 +664,6 @@
             <a href="#" onclick="check('en', true)">Check</a> correctiveness. <a href="#" onclick="check('en',false)">Update</a> terms. <a href="#" onclick="check('la',false)">Translate</a> terms in Latin (or any other provided language). <a href="#" onclick="check('en',false,true)">Show</a> refs. <a href="#" onclick="blend()">Blend</a> in text. <a href="#" onclick="bold()">Bold</a> the terms. </p>
           </div>
         </div>
-        <p id="test"></p>
     </div>
     <script src="bootstrap/js/bootstrap.min.js"></script>
   </body>
