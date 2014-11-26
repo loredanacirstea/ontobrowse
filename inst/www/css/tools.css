@@ -42,3 +42,35 @@ img{
 	margin-top: 20px;
 	padding-left: 2px;
 }
+.ui-autocomplete{
+	
+	border:1px solid #999;
+	border-radius: 15px;
+	background:#FFF;
+	cursor:default;
+	text-align:left;
+	max-height:280px;
+	width: 400px!important;;
+	overflow:auto;
+	position: fixed;
+    display: none ;  
+    top:30%;
+    padding: 6px;
+    margin-bottom: 10px;
+}
+
+.ui-state-focus{
+	font-weight: bold;
+}
+
+/* highlight results */
+.ui-autocomplete span.hl_results {
+    background-color: #ffff66;
+}
+ 
+.ui-autocomplete li {
+    font-size: 12px;
+}
+.ui-menu-item a {
+	color: #000000;
+}

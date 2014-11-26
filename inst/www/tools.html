@@ -5,6 +5,7 @@
     
     <!-- Include order: first jquery, then opencpu.js, and then your code -->
     <script src="opencpu/jquery-1.10.2.min.js"></script>
+    <script src="jqueryui/jquery-ui.min.js"></script>
     <script src="opencpu/opencpu-0.4.js"></script>
     <script src="dist/jstree.min.js"></script>
     <script type="text/javascript" src="js/tinymce/tinymce.min.js"></script>
@@ -12,22 +13,6 @@
     <link rel="stylesheet" href="css/tools.css" />
 
     <script>
-      /*
-      var vars = [], hash;
-      var q = document.URL.split('?')[1];
-      if(q != undefined){
-          q = q.split('&');
-          for(var i = 0; i < q.length; i++){
-              hash = q[i].split('=');
-              vars.push(hash[1]);
-              vars[hash[0]] = hash[1];
-          }
-      }
-      var id = vars["id"];
-      var lang = vars["lang"];
-      var origin = vars["origin"];
-      */
-
       var urlParams;
       (window.onpopstate = function () {
           var match,
@@ -72,6 +57,43 @@
         $body.append('<p>" "</p>');
       }
 */
+
+
+      //recursive tail call optimisation by Irakli Gozalishvili (https://gist.github.com/Gozala/1697037)  with my recursive obj function => array of objects from multilevel list     
+          function tco(f) {
+              var value;
+              var active = false;
+              var accumulated = [];
+              return function accumulator() {
+                  accumulated.push(arguments);
+                  if (!active) {
+                      active = true;
+                      while (accumulated.length) {
+                          value = f.apply(this, accumulated.shift());
+                      }
+                      active = false;
+                      return value;
+                  }
+              }
+          }
+
+          var obj = tco(function(list, result) {
+              result.push({
+                'id': list["id"][0],
+                'value': list["name"][0],
+                'label': list["name"][0] 
+              })
+              if(list["children"][0] != false){
+                  for(kid in list["children"]){
+                    obj(list["children"][kid], result);
+                  }
+                  return result;
+              }
+              else{
+                return result;
+              }
+          }); //end of recursive function
+
       $('#dropdown_tool_kids').html('');
       $('#dropdown_tool_path').html('');
       $('#dropdown_tool_tree').html('');
@@ -295,6 +317,11 @@
 
             var langs = Object.keys(output);
             
+            if(lang != "t"){
+                var src = 'icons/'+lang+'.png';
+            } else{
+                var src = 'icons/ids.png';
+            }
             $("#dropdown_tool_transl").append(
                             $('<button>').attr({
                                     'id': 'dropdown_transl',
@@ -304,7 +331,7 @@
                                     'aria-expanded': 'true'
                                     }).append(
                                         $('<img>').attr({
-                                                      'src': 'icons/'+lang+'.png',
+                                                      'src': src,
                                                       'data-toggle': 'tooltip',
                                                       'data-placement': 'left',
                                                       'title': languages[lang]
@@ -350,6 +377,11 @@
             }
 //change language
 
+            if(lang != "t"){
+                var src = 'icons/'+lang+'.png';
+            } else{
+                var src = 'icons/ids.png';
+            }
             $("#dropdown_tool_lang").append(
             $('<button>').attr({
                     'id': 'dropdown_lang',
@@ -358,7 +390,7 @@
                     'class': 'btn btn-default dropdown-toggle',
                     'aria-expanded': 'true'
                     }).append(
-                          $('<img>').attr({'src': 'icons/'+lang+'.png'}),
+                          $('<img>').attr({'src': src}),
                           $('<span id="lang_drop">').append(languages[lang]).append(
                               $('<span>').attr({'class': 'caret'})
                           )
@@ -400,7 +432,39 @@
       request3.fail(function(){
           alert("Server error: " + request3.responseText);
       });
+  
 
+      var request4 = ocpu.rpc("tree",{
+                                    'term': id,
+                                    'lang': lang,
+                                    'origin': origin,
+                                    'unlist': false
+                                    }, function(output){
+
+ 
+          if(output["haschildren"] != 0){
+            auto_obj = [];
+            auto_obj = obj(output, auto_obj);
+          }
+          else auto_obj = [{'id': 'novalue', 'value': 'No children', 'label': 'No children'}];
+          
+          console.log(auto_obj);
+
+          $( "#autocomplete_subject" ).autocomplete({
+                source: auto_obj,
+                minLength: 3, 
+                html: true,
+                open: function(event, ui) {
+                    $(".ui-autocomplete").css("z-index", 1000);
+                }
+                //,select: function(event,ui){
+                  //jQuery("#hiddenISBN").val(ui.item.id);
+                //}
+            });
+      });
+      request4.fail(function(){
+          alert("Server error: " + request4.responseText);
+      });
 
 
 
@@ -477,20 +541,26 @@
     });
 </script>
   </head>
-    
+  
   <body>
 
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-          <div class="tools">
-              <div class="dropdown" id="dropdown_tool_kids">
-              </div>
-              <div class="dropdown" id="dropdown_tool_path">
-              </div>
-              <div class="dropdown" id="dropdown_tool_tree">
-              </div>
-              <div class="dropdown" id="dropdown_tool_transl">
-              </div>
+          <div class="col-md-4">
+            <div class="tools">
+                <div class="dropdown" id="dropdown_tool_kids">
+                </div>
+                <div class="dropdown" id="dropdown_tool_path">
+                </div>
+                <div class="dropdown" id="dropdown_tool_tree">
+                </div>
+                <div class="dropdown" id="dropdown_tool_transl">
+                </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="autocomplete_line left">Search: <input type="text" id="autocomplete_subject">
+            </div>
           </div>
         </div>
         <div class="row">

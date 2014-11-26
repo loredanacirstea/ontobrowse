@@ -42,8 +42,12 @@
             )
         )
 
-
-        $('#lang').html('<img src="icons/'+lang+'.png">');
+        if(lang != "t"){
+            var src = 'icons/'+lang+'.png';
+        } else{
+            var src = 'icons/ids.png';
+        }
+        $('#lang').html('<img src="'+src+'">');
         $('#description').html(description);
         $('#relation').html(' - '+relation_name);
         $('#source').html('<a target="_blank" href="'+source+'"><img src="icons/link.png"></a>');
