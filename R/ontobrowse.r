@@ -229,16 +229,13 @@ tree <- function(term=9000, lang="la", origin = 9000, unlist=TRUE){
   list <- ontobrowse(term, lang, origin)
   if(list[["haschildren"]] > 0){
     list <- tree_recursive(term, lang, origin, list)
-    if(unlist == TRUE){
-      result = unlist(list, use.names= FALSE)
-    }
-    else{
-      result = list
-    }
+  }
+  if(unlist == TRUE){
+    result = unlist(list, use.names= FALSE)
   }
   else{
     result = list
-  } 
+  }
   result
 }
 
