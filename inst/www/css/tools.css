@@ -10,7 +10,6 @@ body, html {
 .tools{
     display: block;
     float: right;
-    padding-top: 34px;
 }
 .little{
     /*float: right;*/
@@ -142,6 +141,12 @@ div[id^=dropdown_tool_]{
     padding-bottom: 10px;
     display: inline;
 }
+.tools{
+    padding-top: 34px;
+}
+.input{
+    max-width: 60%;
+}
 /*
 #choose_output {
     margin-right: 0;
@@ -178,4 +183,9 @@ span.input-group-addon{
 }
 .explanation{
     padding-left: 5px;
+}
+.center{
+    max-width: 60%;
+    min-width: 400px;
+    margin: auto;
 }

@@ -38,6 +38,7 @@
             "ro" : "Romanian",
             "t" : "FIPAT ids"
           }
+      var loading = 20;
 
       function set_choice(cho){
         $('#choose_span').text(cho);
@@ -68,19 +69,9 @@
       function add_term(id, term){
         //console.log(id);
         //console.log(term);
-        var $body = $(tinymce.activeEditor.getBody());
-        $body.find('p:last').append('<span class="T '+id+'" style="font-weight: bold;" data-mce-style="font-weight: bold;">'+term+'</span>').append("&#160;");
+        //var $body = $(tinymce.activeEditor.getBody()); $body.find('p:last').append();
+        tinymce.activeEditor.execCommand('mceInsertContent', false, '<span class="T '+id+'" style="font-weight: bold;" data-mce-style="font-weight: bold;">'+term+'</span>&#160;');
       }
-                      
-/*
-                      'class': 'T '+id,
-                      'style': 'font-weight: bold;',
-                      'data-mce-style': 'font-weight: bold;'
-                    }).append(term)
-          );
-        $body.append('<p>" "</p>');
-      }
-*/
 
 /*
       //recursive tail call optimisation by Irakli Gozalishvili (https://gist.github.com/Gozala/1697037)  with my recursive obj function => array of objects from multilevel list     
@@ -167,6 +158,8 @@
       $('#dropdown_tool_path').html('');
       $('#dropdown_tool_tree').html('');
 
+//children - writing tool
+
       var request = ocpu.rpc("ontobrowse",{
                                     'term': id,
                                     'lang': lang,
@@ -220,12 +213,14 @@
 
             }
           }
-
+          loading = 30;
       });
 
       request.fail(function(){
           alert("Server error: " + request.responseText);
       });
+
+// path - writing tools
 
       var req = ocpu.rpc("path",{
                                 'term': id,
@@ -234,6 +229,7 @@
                                 }, function(output){
 
           var n = output;
+          console.log(n);
           $("#dropdown_tool_path").append(
             $('<button>').attr({
                     'id': 'dropdown_path',
@@ -279,6 +275,7 @@
                   );
               }
             }
+      loading = 40;
 
 //navigation path  
   
@@ -324,7 +321,7 @@
               }
             }      
 
-
+            loading = 50;
       });
 
       req.fail(function(){
@@ -423,6 +420,7 @@
                     }
                 }
             }
+        loading = 70;
       });
 
       request2.fail(function(){
@@ -546,7 +544,7 @@
             }
           }
 
-
+        loading = 85;
 
       });
       request3.fail(function(){
@@ -625,7 +623,7 @@
             for(kid in output["children"])
               multilevel_tree(output["children"][kid], 'dropdown_tree_multi', 'add_input');
           }
-
+loading = 95;
 // navigation multilevel tree
 
           $("#dropdown_tool_tree_multi_nav").append(
@@ -751,13 +749,16 @@
 
     <div class="container-fluid">
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="dropdown" id="dropdown_tool_tree_multi_nav">
             </div>
             <div class="dropdown" id="dropdown_tool_path_nav">
             </div>
           </div>
-          <div class="col-md-3">
+        </div>
+        <div class="row">
+
+            <div class="col-md-6">
               <div class="tools">
                   <div class="little">
                     <div class="dropdown" id="dropdown_tool_kids">
@@ -772,9 +773,9 @@
                   <div class="dropdown" id="dropdown_tool_transl">
                   </div>
               </div>
-          </div>
-          <div class="col-md-4">
-            <div class="choose_output_group">
+            </div>
+            <div class="col-md-6">
+              <div class="choose_output_group">
                     <div class="dropdown" id="choose_output">
                         <button class="btn btn-primary dropdown-toggle" type="button" id="choose_output_label" data-toggle="dropdown" aria-expanded="true" value="value"><span id="choose_span">value</span><span class="caret"></span>
                         </button>
@@ -784,8 +785,8 @@
                             <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="set_choice('UUID')">UUID</a></li>
                         </ul>
                     </div>
-            </div>
-            <div class="input">
+              </div>
+              <div class="input">
                 <div class="input-group">
                     <input class="form-control" type="text" id="input_children">
                     <span class="input-group-btn">
@@ -837,8 +838,11 @@
                     </span>
                     <input type="hidden" id="input_transl_hidden" value="">
                 </div>                  
+              </div>
             </div>
-          </div>
+
+        </div>
+        <div class="row">
           <div class="col-md-2">
             <div class="extra">
                 <div class="dropdown" id="dropdown_tool_lang">
