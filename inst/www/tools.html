@@ -173,8 +173,16 @@
                     'data-toggle': 'dropdown',
                     'class': 'btn btn-default dropdown-toggle',
                     'aria-expanded': 'true'
-                    }).append(n["name"]).append(
-                  $('<span>').attr({'class': 'caret'})
+                    }).append(
+                    $('<img>').attr({
+                                      'src': 'icons/kids.png',
+                                      'data-toggle': 'tooltip',
+                                      'data-placement': 'left',
+                                       'title': 'Children'
+                                    }),
+                    $('<span id="lang_drop">').append(n["name"]).append(
+                          $('<span>').attr({'class': 'caret'})
+                    )
                   ),
             $('<ul>').attr({
                           'id': 'dropdown_children_ul',
@@ -237,8 +245,16 @@
                     'data-toggle': 'dropdown',
                     'class': 'btn btn-default dropdown-toggle',
                     'aria-expanded': 'true'
-                    }).append(n[id]).append(
-                  $('<span>').attr({'class': 'caret'})
+                    }).append(
+                    $('<img>').attr({
+                                      'src': 'icons/path.png',
+                                      'data-toggle': 'tooltip',
+                                      'data-placement': 'left',
+                                       'title': 'Path'
+                                    }),
+                    $('<span id="lang_drop">').append(n[id]).append(
+                          $('<span>').attr({'class': 'caret'})
+                    )
                   ),
             $('<ul>').attr({
                           'id': 'dropdown_path_ul',
@@ -286,8 +302,17 @@
                     'data-toggle': 'dropdown',
                     'class': 'btn btn-primary dropdown-toggle',
                     'aria-expanded': 'true'
-                    }).append(n[id]).append(
-                  $('<span>').attr({'class': 'caret'})
+                    }).append(
+                    
+                    $('<img>').attr({
+                                      'src': 'icons/path.png',
+                                      'data-toggle': 'tooltip',
+                                      'data-placement': 'left',
+                                       'title': 'Path'
+                                    }),
+                    $('<span id="lang_drop">').append(n[id]).append(
+                          $('<span>').attr({'class': 'caret'})
+                    )
                   ),
             $('<ul>').attr({
                           'id': 'dropdown_path_nav_ul',
@@ -328,6 +353,8 @@
           alert("Server error: " + request.responseText);
       });
 
+//simple tree
+
       var request2 = ocpu.rpc("tree",{
                                     'term': id,
                                     'lang': lang,
@@ -342,8 +369,18 @@
                     'data-toggle': 'dropdown',
                     'class': 'btn btn-default dropdown-toggle',
                     'aria-expanded': 'true'
-                    }).append(n[1]).append(
-                  $('<span>').attr({'class': 'caret'})
+                    }).append(
+                    $('<img>').attr({
+                                      'src': 'icons/onto.png',
+                                      'data-toggle': 'tooltip',
+                                      'data-placement': 'left',
+                                       'title': 'SimpleTree'
+                                    }),
+                    $('<span id="lang_drop">').append(n[1]).append(
+                          $('<span>').attr({'class': 'caret'})
+                    )
+                  //n[1]).append(
+                  //$('<span>').attr({'class': 'caret'})
                   ),
             $('<ul>').attr({
                           'id': 'dropdown_tree_ul',
@@ -597,8 +634,18 @@
                     'class': 'btn btn-default',
                     'data-target': '#',
                     'href': '/page.html'
-                    }).append(output["name"]).append(
-                  $('<span>').attr({'class': 'caret'})
+                    }).append(
+                    $('<img>').attr({
+                                      'src': 'icons/onto.png',
+                                      'data-toggle': 'tooltip',
+                                      'data-placement': 'left',
+                                       'title': 'Tree'
+                                    }),
+                    $('<span id="lang_drop">').append(output["name"]).append(
+                          $('<span>').attr({'class': 'caret'})
+                    )
+                  //output["name"]).append(
+                  //$('<span>').attr({'class': 'caret'})
                   ),
             $('<ul>').attr({
                 'class': 'dropdown-menu multi-level',
