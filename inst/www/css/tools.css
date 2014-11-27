@@ -9,6 +9,10 @@ body, html {
 }
 .tools{
     display: block;
+    float: right;
+}
+.little{
+    /*float: right;*/
 }
 .scrollable-menu{
     height: auto;
@@ -66,13 +70,13 @@ img{
     height: 20px;
 }
 #dropdown_transl_ul>li{
-	display: list-item;
+    display: list-item;
 }
 #lang_drop{
     padding-left: 10px;
 }
 .extra{
-	position: fixed;
+    position: fixed;
     right: 0;
     top: 0;
     min-height: 100px;
@@ -83,23 +87,30 @@ img{
     border-radius: 0 6px 6px 6px;
 }
 #dropdown_lang_ul{
-	left: -35px;
+    left: -35px;
 }
+#dropdown_path_nav_ul{
+    left: -100px;
+}
+/*
+div[id^=dropdown_tool_]{
+    float: right;
+}*/
 .writing_tool{
-	margin-top: 20px;
-	padding-left: 2px;
+    margin-top: 20px;
+    padding-left: 2px;
 }
 .ui-autocomplete{
-	
-	border:1px solid #999;
-	border-radius: 15px;
-	background:#FFF;
-	cursor:default;
-	text-align:left;
-	max-height:280px;
-	width: 400px!important;;
-	overflow:auto;
-	position: fixed;
+    
+    border:1px solid #999;
+    border-radius: 15px;
+    background:#FFF;
+    cursor:default;
+    text-align:left;
+    max-height:280px;
+    width: 400px!important;;
+    overflow:auto;
+    position: fixed;
     display: none ;  
     top:30%;
     padding: 6px;
@@ -107,7 +118,7 @@ img{
 }
 
 .ui-state-focus{
-	font-weight: bold;
+    font-weight: bold;
 }
 
 /* highlight results */
@@ -119,5 +130,28 @@ img{
     font-size: 12px;
 }
 .ui-menu-item a {
-	color: #000000;
+    color: #000000;
+}
+.choose_output_group{
+    display: flex;
+}
+.search{
+    padding-bottom: 10px;
+}
+.input-group-addon{
+    background-color: #428BCA;
+    border: 1px solid #428BCA;
+}
+.input{
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+.writing_tool{
+    max-width: 60%;
+    min-width: 400px;
+    padding-top: 40px;
+    margin: auto;
+}
+.explanation{
+    padding-left: 5px;
 }

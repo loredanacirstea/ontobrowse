@@ -29,8 +29,7 @@
       var id = urlParams["id"];
       var lang = urlParams["lang"];
       var origin = urlParams["origin"];
-
-      
+      var output_choice;      
       var languages = {
             "la" :"Latin",
             "en" : "English",
@@ -39,6 +38,27 @@
             "ro" : "Romanian",
             "t" : "FIPAT ids"
           }
+
+      function set_choice(cho){
+        $('#choose_span').text(cho);
+      }
+      function add_input(id, value, htmlid){
+          if($('#choose_span').text() == "value"){
+            $('#'+htmlid).val(value);
+        }
+          else if($('#choose_span').text() == "UUID"){
+            $('#'+htmlid).val(id);
+        }
+        else{
+            var request5 = ocpu.rpc("translations",{'term': id}, function(output){
+                $('#'+htmlid).val(output["t"]);
+            });
+            request5.fail(function(){
+              alert("Server error: " + request5.responseText);
+      });
+            
+        }
+      }
 
       function add_term(id, term){
         //console.log(id);
@@ -100,27 +120,39 @@
 
           //}); //end of recursive function
 
-      function multilevel_tree(list, id) {
+      function multilevel_tree(list, id, onclick, href) {
           //console.log(list);
+          if(onclick != ''){
+            var onclickk = onclick+'("'+list["id"][0]+'","'+list["name"][0]+'","'+'input_tree_multi")';
+            var hreff = 'javascript:;';
+          }
+          else{
+            var onclickk = '';
+            var hreff = href+'?id='+list["id"][0]+'&lang='+lang+'&origin='+origin;
+          }
+          console.log(onclickk);
+          console.log(hreff);
           if(list["haschildren"][0] > 0){
-              $(id).append(
+              $('#'+id).append(
                 $('<li class="dropdown-submenu">').append(
                   $('<a>').attr({
-                          'href':'javascript:;',
-                          'tabindex' : "-1"
+                          'href': hreff,
+                          'tabindex' : "-1",
+                          'onclick': onclickk
                           }).append(list["name"][0]),
-                  $('<ul class="dropdown-menu" id="dropdown_tree_'+list["id"][0]+'">')
+                  $('<ul class="dropdown-menu" id="'+id+'_'+list["id"][0]+'">')
                   )
                 );
               for(kid in list["children"])
-                  multilevel_tree(list["children"][kid], '#dropdown_tree_'+list["id"][0]);
+                  multilevel_tree(list["children"][kid], id+'_'+list["id"][0], onclick, href);
           }
           else{
-              $(id).append(
+              $('#'+id).append(
                 $('<li>').append(
                     $('<a>').attr({
-                          'href':'javascript:;',
-                          'tabindex' : "-1"
+                          'href': hreff,
+                          'tabindex' : "-1",
+                          'onclick': onclickk
                           }).append(list["name"][0])
                 )
               );
@@ -174,8 +206,10 @@
                                         'role': 'menuitem',
                                         'tabindex': '-1',
                                         'href': 'javascript:;',
-                                        'onclick': 'add_term("'+n["children"][i]["id"]+
-                                                    '","'+n["children"][i]["name"]+'")'
+                                        //'onclick': 'add_term("'+n["children"][i]["id"]+
+                                        //            '","'+n["children"][i]["name"]+'")'
+                                        'onclick': 'add_input("'+n["children"][i]["id"]+
+                                                    '","'+n["children"][i]["name"]+'", "input_children")'
                                         }).append(n["children"][i]["name"])
                     )
                 );
@@ -232,14 +266,59 @@
                                           'role': 'menuitem',
                                           'tabindex': '-1',
                                           'href': 'javascript:;',
-                                          'onclick': 'add_term("'+ids[i]+
-                                                    '","'+n[ids[i]]+'")'
+                                          //'onclick': 'add_term("'+ids[i]+
+                                          //          '","'+n[ids[i]]+'")'
+                                          'onclick': 'add_input("'+ids[i]+
+                                                    '","'+n[ids[i]]+'", "input_path")'
                                           }).append(n[ids[i]])
                       )
                   );
               }
             }
-                  
+
+//navigation path  
+  
+          $("#dropdown_tool_path_nav").append(
+            $('<button>').attr({
+                    'id': 'dropdown_path_nav',
+                    'type': 'button',
+                    'data-toggle': 'dropdown',
+                    'class': 'btn btn-primary dropdown-toggle',
+                    'aria-expanded': 'true'
+                    }).append(n[id]).append(
+                  $('<span>').attr({'class': 'caret'})
+                  ),
+            $('<ul>').attr({
+                          'id': 'dropdown_path_nav_ul',
+                          'class': 'dropdown-menu dropdown-menu-right scrollable-menu',
+                          'role': 'menu',
+                          'aria-labelledby': 'dropdown_path_nav'
+                          })
+            );
+          var ids = Object.keys(n);
+          if(ids.length == 1){
+              $('#dropdown_path_nav_ul').append(
+                  $('<li>').attr({'role': 'presentation'}).append(
+                      $('<a>').attr({
+                                      'role': 'menuitem',
+                                      'tabindex': '-1',
+                                      'href': 'javascript:;'
+                                      }).append('This is the root')
+                  )
+              );
+          } else{
+              for(i=1; i<ids.length; i++){
+                  $('#dropdown_path_nav_ul').append(
+                      $('<li>').attr({'role': 'presentation'}).append(
+                          $('<a>').attr({
+                                          'role': 'menuitem',
+                                          'tabindex': '-1',
+                                          'href': 'tools.html?id='+ids[i]+'&lang='+lang+'&origin='+origin
+                                          }).append(n[ids[i]])
+                      )
+                  );
+              }
+            }      
 
 
       });
@@ -297,8 +376,10 @@
                                           'role': 'menuitem',
                                           'tabindex': '-1',
                                           'href': 'javascript:;',
-                                          'onclick': 'add_term("'+n[i-1]+
-                                                    '","'+n[i]+'")'
+                                          //'onclick': 'add_term("'+n[i-1]+
+                                          //          '","'+n[i]+'")'
+                                          'onclick': 'add_input("'+n[i-1]+
+                                                    '","'+n[i]+'", "input_tree")'
                                           }).append(space+n[i])
                       )
                     );
@@ -394,8 +475,10 @@
                                       'role': 'menuitem',
                                       'tabindex': '-1',
                                       'href': 'javascript:;',
-                                      'onclick': 'add_term("'+id+
-                                                    '","'+output[langs[i]]+'")'
+                                      //'onclick': 'add_term("'+id+
+                                      //              '","'+output[langs[i]]+'")'
+                                      'onclick': 'add_input("'+id+
+                                                    '","'+output[langs[i]]+'", "input_transl")'
                                       }).append(
                                       $('<img>').attr({
                                                       'src': src,
@@ -499,7 +582,7 @@
                 //}
             });
 
-          //multilevel dropdown with tree items
+//multilevel dropdown with tree items
           $("#dropdown_tool_tree_multi").append(
             $('<a>').attr({
                     'id': 'dLabel',
@@ -532,7 +615,47 @@
           }
           else{
             for(kid in output["children"])
-              multilevel_tree(output["children"][kid], '#dropdown_tree_multi');
+              multilevel_tree(output["children"][kid], 'dropdown_tree_multi', 'add_input');
+          }
+
+// navigation multilevel tree
+
+          $("#dropdown_tool_tree_multi_nav").append(
+            $('<a>').attr({
+                    'id': 'dropdown_tool_tree_multi_nav_label',
+                    'role': 'button',
+                    'data-toggle': 'dropdown',
+                    'class': 'btn btn-primary',
+                    'data-target': '#',
+                    'href': '/page.html'
+                    }).append(
+                      $('<img>').attr({'src': 'icons/onto.png'}),
+                      $('<span id="lang_drop">').append(output["name"]).append(
+                          $('<span>').attr({'class': 'caret'})
+                      )
+                  ),
+            $('<ul>').attr({
+                'class': 'dropdown-menu multi-level',
+                'id': 'dropdown_tree_multi_nav',
+                'role': 'menu',
+                'aria-labelledby': 'dropdown_tool_tree_multi_nav_label'
+            })
+          );
+
+          if(output["haschildren"] == 0){
+            $('#dropdown_tree_multi_nav').append(
+                  $('<li>').attr({'role': 'presentation'}).append(
+                      $('<a>').attr({
+                                      'role': 'menuitem',
+                                      'tabindex': '-1',
+                                      'href': 'javascript:;'
+                                      }).append('No children')
+                  )
+              );
+          }
+          else{
+            for(kid in output["children"])
+              multilevel_tree(output["children"][kid], 'dropdown_tree_multi_nav', '', 'tools.html');
           }
 
       });
@@ -620,48 +743,75 @@
 
     <div class="container-fluid">
         <div class="row">
-          <div class="col-md-4">
-            </br></br>
+          <div class="col-md-2">
             <div class="tools">
-                <div class="dropdown" id="dropdown_tool_kids">
+                <div class="dropdown" id="dropdown_tool_tree_multi_nav">
                 </div>
-                <div class="dropdown" id="dropdown_tool_path">
-                </div>
-                <div class="dropdown" id="dropdown_tool_tree">
-                </div>
-                <div class="dropdown" id="dropdown_tool_tree_multi">
+                <div class="little">
+                  <div class="dropdown" id="dropdown_tool_kids">
+                  </div>
+                  <div class="dropdown" id="dropdown_tool_path">
+                  </div>
+                  <div class="dropdown" id="dropdown_tool_tree">
+                  </div>
+                  <div class="dropdown" id="dropdown_tool_tree_multi">
+                  </div>
                 </div>
                 <div class="dropdown" id="dropdown_tool_transl">
                 </div>
             </div>
           </div>
-          <div class="col-md-4">
-            <div clas="search">
-                <div class="choose_output">
+          <div class="col-md-3">
+            <div clas="input">
+                <div class="choose_output_group">
+                  <div class="dropdown" id="choose_output">
+                      <button class="btn btn-primary dropdown-toggle" type="button" id="choose_output_label" data-toggle="dropdown" aria-expanded="true" value="value"><span id="choose_span">value</span><span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="choose_output_label">
+                          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="set_choice('value')">value</a></li>
+                          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="set_choice('official ID')">official ID</a></li>
+                          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="set_choice('UUID')">UUID</a></li>
+                      </ul>
+                  </div>
                 </div>
-                <div class="autocomplete_line left">Search: <input type="text" id="autocomplete_kids">
-                </div>
-                <div class="autocomplete_line left">Search: <input type="text" id="autocomplete_path">
-                </div>
-                <div class="autocomplete_line left">Search: <input type="text" id="autocomplete_subject">
-                </div>
+                <input class="input" type="text" id="input_children">
+                <input class="input" type="text" id="input_path">
+                <input class="input" type="text" id="input_tree">
+                <input class="input" type="text" id="input_tree_multi">
+                <input class="input" type="text" id="input_transl">                
             </div>
           </div>
         </div>
         <div class="row">
             <div class="extra">
-              <div class="dropdown" id="dropdown_tool_lang">
-              </div>
+                <div class="dropdown" id="dropdown_tool_lang">
+                </div>
+                <div class="dropdown" id="dropdown_tool_path_nav">
+                </div>
             </div>
         </div>
         <div class="row">
           <div class="writing_tool">
+            <div class="search">
+                <div class="input-group">
+                      <input type="text" class="form-control" id="autocomplete_subject">
+                      <span class="input-group-addon">
+                        <img src="icons/search.png"></img>
+                      </span>
+                </div>
+            </div>
             <form method="post" action="somepage">
                 <textarea name="content" id="content" style="width:100%"><p>The <span class="T 4297" style="font-weight: bold;">Femoral artery</span> is a large <span class="T 3527" style="font-weight: bold;">Artery</span> in the <span class="T 82" style="font-weight: bold;">Thigh</span>. It is a continuation of the <span class="T 4289" style="font-weight: bold;">External iliac artery</span> and begins at the <span class="T 1885" style="font-weight: bold;">Inguinal canal</span>.</p></textarea>
             </form>
             <div id="lab"></div>
-            Insert controlled vocabulary terms using Insert/Controlled Phrase menu. Only Terminologia Anatomica terms at the moment :)
-            <a href="#" onclick="check('en', true)">Check</a> correctiveness. <a href="#" onclick="check('en',false)">Update</a> terms. <a href="#" onclick="check('la',false)">Translate</a> terms in Latin (or any other provided language). <a href="#" onclick="check('en',false,true)">Show</a> refs. <a href="#" onclick="blend()">Blend</a> in text. <a href="#" onclick="bold()">Bold</a> the terms. </p>
+            <div class="explanation">
+              <p>
+                Insert controlled vocabulary terms using Insert/Controlled Phrase menu.
+              </p>
+              <p>
+                <a href="#" onclick="check('en', true)">Check</a> correctiveness. <a href="#" onclick="check('en',false)">Update</a> terms. <a href="#" onclick="check('la',false)">Translate</a> terms in Latin (or any other provided language). <a href="#" onclick="check('en',false,true)">Show</a> refs. <a href="#" onclick="blend()">Blend</a> in text. <a href="#" onclick="bold()">Bold</a> the terms. 
+              </p>
+            </div>
           </div>
         </div>
     </div>
