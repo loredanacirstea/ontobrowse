@@ -10,6 +10,7 @@ body, html {
 .tools{
     display: block;
     float: right;
+    padding-top: 34px;
 }
 .little{
     /*float: right;*/
@@ -77,6 +78,7 @@ img{
 }
 .extra{
     position: fixed;
+    /*float: right;*/
     right: 0;
     top: 0;
     min-height: 100px;
@@ -89,9 +91,10 @@ img{
 #dropdown_lang_ul{
     left: -35px;
 }
+/*
 #dropdown_path_nav_ul{
     left: -100px;
-}
+}*/
 /*
 div[id^=dropdown_tool_]{
     float: right;
@@ -137,14 +140,35 @@ div[id^=dropdown_tool_]{
 }
 .search{
     padding-bottom: 10px;
+    display: inline;
 }
+/*
+#choose_output {
+    margin-right: 0;
+    margin-left: auto;
+}*/
+/*
 .input-group-addon{
     background-color: #428BCA;
     border: 1px solid #428BCA;
 }
-.input{
-    padding: 6px 12px;
-    border-radius: 4px;
+.input-group-btn{
+    background-color: #428BCA;
+    border: 1px solid #428BCA;
+}
+#add_term{
+    border-color: #428BCA;
+}
+#source_autocomplete{
+    border-color: #428BCA;
+}*/
+/*
+div.input{
+    padding-top: 34px;
+}*/
+span.input-group-addon{
+    background-color: #428BCA;
+    border: 1px solid #428BCA;
 }
 .writing_tool{
     max-width: 60%;

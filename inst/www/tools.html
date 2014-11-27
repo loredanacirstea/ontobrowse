@@ -43,10 +43,11 @@
         $('#choose_span').text(cho);
       }
       function add_input(id, value, htmlid){
-          if($('#choose_span').text() == "value"){
+        $('#'+htmlid+'_hidden').val(id);
+        if($('#choose_span').text() == "value"){
             $('#'+htmlid).val(value);
         }
-          else if($('#choose_span').text() == "UUID"){
+        else if($('#choose_span').text() == "UUID"){
             $('#'+htmlid).val(id);
         }
         else{
@@ -60,12 +61,15 @@
         }
       }
 
+      function set_term(htmlid){
+          add_term($('#'+htmlid+'_hidden').val(), $('#'+htmlid).val());
+      }
+
       function add_term(id, term){
         //console.log(id);
         //console.log(term);
         var $body = $(tinymce.activeEditor.getBody());
-        $body.find('p:last').append('<span class="T '+id+'" style="font-weight: bold;" data-mce-style="font-weight: bold;">'+term+'</span>').append(document.createTextNode( "&nbsp;" ));
-        //$body.find('p:last').append(" ");
+        $body.find('p:last').append('<span class="T '+id+'" style="font-weight: bold;" data-mce-style="font-weight: bold;">'+term+'</span>').append("&#160;");
       }
                       
 /*
@@ -577,9 +581,13 @@
                 open: function(event, ui) {
                     $(".ui-autocomplete").css("z-index", 1000);
                 }
-                //,select: function(event,ui){
+                /*,select: function(event,ui){
                   //jQuery("#hiddenISBN").val(ui.item.id);
-                //}
+                  console.log(ui.item);
+                  console.log(ui.item.id);
+                  console.log(ui.item.value);
+                  add_term()
+                }*/
             });
 
 //multilevel dropdown with tree items
@@ -743,52 +751,100 @@
 
     <div class="container-fluid">
         <div class="row">
-          <div class="col-md-2">
-            <div class="tools">
-                <div class="dropdown" id="dropdown_tool_tree_multi_nav">
-                </div>
-                <div class="little">
-                  <div class="dropdown" id="dropdown_tool_kids">
-                  </div>
-                  <div class="dropdown" id="dropdown_tool_path">
-                  </div>
-                  <div class="dropdown" id="dropdown_tool_tree">
-                  </div>
-                  <div class="dropdown" id="dropdown_tool_tree_multi">
-                  </div>
-                </div>
-                <div class="dropdown" id="dropdown_tool_transl">
-                </div>
+          <div class="col-md-3">
+            <div class="dropdown" id="dropdown_tool_tree_multi_nav">
+            </div>
+            <div class="dropdown" id="dropdown_tool_path_nav">
             </div>
           </div>
           <div class="col-md-3">
-            <div clas="input">
-                <div class="choose_output_group">
-                  <div class="dropdown" id="choose_output">
-                      <button class="btn btn-primary dropdown-toggle" type="button" id="choose_output_label" data-toggle="dropdown" aria-expanded="true" value="value"><span id="choose_span">value</span><span class="caret"></span>
-                      </button>
-                      <ul class="dropdown-menu" role="menu" aria-labelledby="choose_output_label">
-                          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="set_choice('value')">value</a></li>
-                          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="set_choice('official ID')">official ID</a></li>
-                          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="set_choice('UUID')">UUID</a></li>
-                      </ul>
+              <div class="tools">
+                  <div class="little">
+                    <div class="dropdown" id="dropdown_tool_kids">
+                    </div>
+                    <div class="dropdown" id="dropdown_tool_path">
+                    </div>
+                    <div class="dropdown" id="dropdown_tool_tree">
+                    </div>
+                    <div class="dropdown" id="dropdown_tool_tree_multi">
+                    </div>
                   </div>
+                  <div class="dropdown" id="dropdown_tool_transl">
+                  </div>
+              </div>
+          </div>
+          <div class="col-md-4">
+            <div class="choose_output_group">
+                    <div class="dropdown" id="choose_output">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="choose_output_label" data-toggle="dropdown" aria-expanded="true" value="value"><span id="choose_span">value</span><span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="choose_output_label">
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="set_choice('value')">value</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="set_choice('official ID')">official ID</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="set_choice('UUID')">UUID</a></li>
+                        </ul>
+                    </div>
+            </div>
+            <div class="input">
+                <div class="input-group">
+                    <input class="form-control" type="text" id="input_children">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="add_term" onclick="set_term('input_children')"><img src="icons/out.png"></img></button>
+                    </span>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="source_autocomplete"><img src="icons/source.png"></button>
+                    </span>
+                    <input type="hidden" id="input_children_hidden" value="">
+
                 </div>
-                <input class="input" type="text" id="input_children">
-                <input class="input" type="text" id="input_path">
-                <input class="input" type="text" id="input_tree">
-                <input class="input" type="text" id="input_tree_multi">
-                <input class="input" type="text" id="input_transl">                
+                <div class="input-group">
+                    <input class="form-control" type="text" id="input_path">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="add_term" onclick="set_term('input_path')"><img src="icons/out.png"></button>
+                    </span>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="source_autocomplete"><img src="icons/source.png"></button>
+                    </span>
+                    <input type="hidden" id="input_path_hidden" value="">
+                </div>
+                <div class="input-group">
+                    <input class="form-control" type="text" id="input_tree">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="add_term" onclick="set_term('input_tree')"><img src="icons/out.png"></button>
+                    </span>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="source_autocomplete"><img src="icons/source.png"></button>
+                    </span>
+                    <input type="hidden" id="input_tree_hidden" value="">
+                </div>
+                <div class="input-group">
+                    <input class="form-control" type="text" id="input_tree_multi">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="add_term" onclick="set_term('input_tree_multi')"><img src="icons/out.png"></button>
+                    </span>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="source_autocomplete"><img src="icons/source.png"></button>
+                    </span>
+                    <input type="hidden" id="input_tree_multi_hidden" value="">
+                </div>
+                <div class="input-group">
+                    <input class="form-control" type="text" id="input_transl">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="add_term" onclick="set_term('input_transl')"><img src="icons/out.png"></button>
+                    </span>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="source_autocomplete"><img src="icons/source.png"></button>
+                    </span>
+                    <input type="hidden" id="input_transl_hidden" value="">
+                </div>                  
             </div>
           </div>
-        </div>
-        <div class="row">
+          <div class="col-md-2">
             <div class="extra">
                 <div class="dropdown" id="dropdown_tool_lang">
                 </div>
-                <div class="dropdown" id="dropdown_tool_path_nav">
-                </div>
             </div>
+          </div>
         </div>
         <div class="row">
           <div class="writing_tool">
@@ -798,7 +854,13 @@
                       <span class="input-group-addon">
                         <img src="icons/search.png"></img>
                       </span>
-                </div>
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="add_term" onclick="set_term('autocomplete_subject')"><img src="icons/out.png"></button>
+                      </span>
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="source_autocomplete"><img src="icons/source.png"></button>
+                      </span>
+                </div>               
             </div>
             <form method="post" action="somepage">
                 <textarea name="content" id="content" style="width:100%"><p>The <span class="T 4297" style="font-weight: bold;">Femoral artery</span> is a large <span class="T 3527" style="font-weight: bold;">Artery</span> in the <span class="T 82" style="font-weight: bold;">Thigh</span>. It is a continuation of the <span class="T 4289" style="font-weight: bold;">External iliac artery</span> and begins at the <span class="T 1885" style="font-weight: bold;">Inguinal canal</span>.</p></textarea>
