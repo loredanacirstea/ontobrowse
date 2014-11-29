@@ -10,6 +10,5 @@ Depends:
     R (>= 3.1.0)
 Imports:
     RCurl
-    uuid (>= 0.1-1)
 License: What license is it under?
 LazyData: true
