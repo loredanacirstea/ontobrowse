@@ -250,31 +250,22 @@ tree_recursive <- function(term, lang, origin, list){
   list
 }
 
-uuid_df <- function(terms){
-  arr = c()
-  #rows <- seq_len(length(row.names(terms)))
-  #temp <- cbind(terms, rows)
-  dup <- duplicated(terms[,"term_id"])
-  indexes <- sort.int(dup, index.return=TRUE)$ix
-  unique <- indexes[which(dup[indexes] == FALSE)]
-  for(un in unique){
-    arr[un] <- UUIDgenerate()
-  }
-  if(any(indexes[which(dup[indexes] == TRUE)]) == TRUE){
-    rest <- indexes[which(dup[indexes] == TRUE)]
-    arr[rest] <- "0"
-  }
-  terms <- cbind(terms,uuid=arr)
-  rows <- row.names(terms[terms$uuid == "0",])
-  for(row in rows){
-    terms[row,"uuid"]<- as.character(terms[terms$term_id == as.character(terms[row,"term_id"]) & terms$uuid != 0, "uuid"][1])
-  }
-      
-#    rest <- sort.int(dup[dup==TRUE], index.return=TRUE)$ix 
-#     for(row in rest){
-#       id = as.character(temp[temp$rows == row,"term_id"])
-#       row_first = min(as.integer(temp[temp$term_id == id,"rows"]))
-#       arr[row] = arr[row_first]
-#     }
-  terms
-}
+# uuid_df <- function(terms){
+#   arr = c()
+#   dup <- duplicated(terms[,"term_id"])
+#   indexes <- sort.int(dup, index.return=TRUE)$ix
+#   unique <- indexes[which(dup[indexes] == FALSE)]
+#   for(un in unique){
+#     arr[un] <- UUIDgenerate()
+#   }
+#   if(any(indexes[which(dup[indexes] == TRUE)]) == TRUE){
+#     rest <- indexes[which(dup[indexes] == TRUE)]
+#     arr[rest] <- "0"
+#   }
+#   terms <- cbind(terms,uuid=arr)
+#   rows <- row.names(terms[terms$uuid == "0",])
+#   for(row in rows){
+#     terms[row,"uuid"]<- as.character(terms[terms$term_id == as.character(terms[row,"term_id"]) & terms$uuid != 0, "uuid"][1])
+#   }
+#   terms
+# }
