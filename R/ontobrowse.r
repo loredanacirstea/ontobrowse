@@ -165,13 +165,13 @@ ontologies <- function(){
   data <- list()
   for(lang in langs){
     data[[lang]] <- list()
-    ids <- as.character(onto_list[onto_list$lang == lang, "subject_id"])
+    ids <- as.character(onto_list[onto_list$lang == lang, "uuid"])
     for(id in ids){
       data[[lang]][[id]] <- list()
       temp <- list()
       attr <- names(onto_list)
       for(att in attr){
-        temp[[att]] <- as.character(onto_list[onto_list$lang == lang & onto_list$subject_id == id, att])
+        temp[[att]] <- as.character(onto_list[onto_list$lang == lang & onto_list$uuid == id, att])
       }
       data[[lang]][[id]] <- temp
     }

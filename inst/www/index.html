@@ -24,7 +24,7 @@
             "ro" : "Romanian",
             "t" : "FIPAT ids"
           }
-      var origin = '9000';
+      var origin = "be81554a-7759-11e4-adb6-57ce06b062da";
       $(function () { $("[data-toggle='tooltip']").tooltip(); });
       function tree1(term_id, lang, description, language, relation_name, source){
         //console.log(term_id);
@@ -341,12 +341,6 @@
             
             //console.log(output);
           var langs_r = Object.keys(output);
-          var onto = {
-            "9000" : "Terminologia Morphologica",
-            "8222" : "Terminologia Anatomica",
-            "10001" : "Terminologia Histologica",
-            "27970" : "Terminologia Embryologica"
-          }
 
           $("#dropdownid").append(
             $('<a>').attr({
