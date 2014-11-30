@@ -75,9 +75,9 @@
                 jQuery.ajax({
                     type: 'POST',
                     url: "../R/ontobrowse",
-                    data: { 'term' : id,
+                    data: { 'term' : "\""+id+"\"",
                             "lang": "\""+lang+"\"",
-                            "origin": origin
+                            "origin": "\""+origin+"\""
                           },
                     success: function(dat) {
                         n = dat.split("\n");
@@ -394,12 +394,11 @@
                       $('<a>').attr({
                           'href':'javascript:;',
                           'tabindex' : "-1",
-                          'onClick' : "tree1("+ids[j]+",'"+langs_r[i]+"','"
+                          'onClick' : "tree1('"+ids[j]+"','"+langs_r[i]+"','"
                                   +output[langs_r[i]][ids[j]]["description"]+"', '"
                                   +languages[langs_r[i]]+"', '"
                                   +output[langs_r[i]][ids[j]]["relation_name"]+"', '"
-                                  +output[langs_r[i]][ids[j]]["source"]+"', '"
-                                  +"');"
+                                  +output[langs_r[i]][ids[j]]["source"]+"');"
                         }).append(output[langs_r[i]][ids[j]]["description"])
                       )
                     );
