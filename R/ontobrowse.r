@@ -146,7 +146,7 @@ uuid_dash <- function(uuid){
 set_origin <- function(uuid){
   origin <- uuid
 }
-load_apps <- function(uuid, lang){
+load_apps <- function(uuid, lang, origin){
   list <- list()
   path <- ancestry(terms, rels, uuid, lang, origin)
   if(length(row.names(subject_apps[subject_apps$uuid %in% path & 
