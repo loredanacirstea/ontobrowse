@@ -176,7 +176,6 @@ load_apps <- function(uuid, lang, origin){
         else{
           params[param] <- as.character(data[data$uuid == uuid, param])
           #url <- sub(paste(c("<",param,">"),collapse=""), params[param], url, fixed=TRUE)
-          cat(paste(c(param,":",params[param]),collapse=""))
           if(!params[param] %in% c("NULL","NA")){
             urln <- paste(c(urln, params[param], collapse=""))
           }
