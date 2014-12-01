@@ -8,15 +8,15 @@
 #"https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv"
 #library(uuid)
 
-library(RCurl)
-x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
-terms <- read.csv(text = x)
-y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
-rels <- read.csv(text = y)
-s <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv")
-smp <- read.csv(text = s)
-subject_apps <- readRDS("data/subject_apps.rds")
-onto_list <- readRDS("data/onto_list.rds")
+# library(RCurl)
+# x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
+# terms <- read.csv(text = x)
+# y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
+# rels <- read.csv(text = y)
+# s <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv")
+# smp <- read.csv(text = s)
+# subject_apps <- readRDS("data/subject_apps.rds")
+# onto_list <- readRDS("data/onto_list.rds")
 app_list = list()
 
 ancestry <- function(terms, rels, term, lang, origin, returnIds = TRUE) {
@@ -54,7 +54,7 @@ children <- function(terms, rels, term, lang, returnIds = TRUE) {
       termN <- termN[!is.na(termN)][1];
       kids = c(kids, termN);
     }
-    result <- kidsdebug()
+    result <- kids
   }
   return(result)
 }
@@ -130,28 +130,107 @@ smp_api <- function(term){
   api
 }
 
-load_apps <- function(uuid, lang = ""){
-  if(length(row.names(subject_apps[subject_apps$subject == uuid,])) > 0){
-    apps <- subject_apps[subject_apps$subject == uuid,]
-    for(app in apps){
-      app_df <- getURL(as.character(apps[app,"csv_url"]))
-      url <- as.character(apps[app,"root_url"])
-      #param = 
-      #app_list[[apps[app,"name"]]] <<- 
-    }
-  }
+uuid_strip <- function(uuid){
+  uuid <- gsub("-","",uuid, fixed=TRUE)
+  uuid
+}
+uuid_dash <- function(uuid){
+  uuid <- gsub("-","",uuid, fixed=TRUE)
+  uuidn <- paste(c(substr(uuid, 1, 8), "-", substr(uuid, 9, 12), "-", 
+                   substr(uuid, 13, 16), "-", substr(uuid, 17, 20), "-",
+                   substr(uuid, 21, 32)), collapse="")
+  uuidn
 }
 
-add_app <- function(name, icon, subject, type_value, type_level, langs, subject_column, root_url, csv_url){
-  if(type_value != "uuid"){
+load_apps <- function(uuid, lang){
+  list <- list()
+  if(length(row.names(subject_apps[subject_apps$uuid == uuid & grepl(lang, subject_apps$langs,fixed=TRUE),])) > 0){
+    apps <- subject_apps[subject_apps$subject == uuid & grepl(lang, subject_apps$langs,fixed=TRUE),]
+    for(row in row.names(apps)){
+      name <- as.character(apps[row,"name"])
+      if(length(app_list[[name]]) == 0){
+        temp <- getURL(as.character(apps[row,"csv_url"]))
+        app_list[[name]] <<- read.csv(text = temp)
+      }
+      data <- app_list[[name]]
+      url <- as.character(apps[row,"root_url"])
+      param_ind <- gregexpr("(<)([^>]+)(>)", url)
+      start_ind <- param_ind[[1]]
+      length_ind <- attr(param_ind[[1]],"match.length")
+      params <- c();
+      ini <- 1
+      urln <- ""
+      for(i in 1:length(start_ind)){
+        param <- substr(url,start_ind[i]+1,start_ind[i]+length_ind[i]-2)
+        urln <- paste(c(urln,substr(url,ini, start_ind[i]-1)), collapse="")
+        if(param == "uuid"){ 
+          #url <- sub(paste(c("<",param,">"),collapse=""), uuid, url, fixed=TRUE)
+          urln <- paste(c(urln, uuid, collapse=""))
+        }
+        else if(param == "lang"){
+          #url <- sub(paste(c("<",param,">"),collapse=""), lang, url, fixed=TRUE)
+          urln <- paste(c(urln, lang, collapse=""))
+        }
+        else{
+          params[param] <- as.character(data[data$uuid == uuid, param])
+          #url <- sub(paste(c("<",param,">"),collapse=""), params[param], url, fixed=TRUE)
+          if(!params[param] %in% c("NULL","NA")){
+            urln <- paste(c(urln, params[param], collapse=""))
+          }
+        }
+        ini = start_ind[i]+length_ind[i]
+      }
+      urln <- paste(c(urln,substr(url,ini,  nchar(url))), collapse="")
+      id <- as.character(apps[row,"id"])
+      list[[id]] <- list()
+      for(n in names(apps)){
+        list[[id]][[n]] <- as.character(apps[row,n])
+      }
+      list[[id]][["root_url"]]<- urln
+    }
+  }
+  list
+}
+
+add_app <- function(name, icon, subject, type_value, type_level, langs, uuid_column, root_url, csv_url, origin=""){
+  if(type_value == "uuid"){
+    uuid <- subject
+  }
+  else {
     uuid <- get_uuid(subject, value_type)
   }
-  subject_apps <<- rbind(subject_apps, c(name, icon, uuid, subject, type_value, type_level, langs, subject_column, root_url, csv_url))
+  id <- as.integer(subject_apps[length(row.names(subject_apps)),"id"])+1
+  row <- data.frame(id, name, icon, uuid, subject, type_value, type_level, paste(langs, collapse=","), subject_column, root_url, csv_url)
+  names(row) <- names(subject_apps)
+  subject_apps <<- rbind(subject_apps, row)
+  #saveRDS(subject_apps, file="data/subject_apps.rds")
+  if(type_level == "tree"){
+    subject_list <- tree(uuid, langs[1], unlist=FALSE)
+    subject_list <- unlist(subject_list)
+    uuids <- subject_list[grep("id",names(subject_list), fixed=TRUE)]
+    subjects <- subject_list[grep("name",names(subject_list), fixed=TRUE)]
+  }
+  else if(type_level == "children"){
+    uuids <- children(terms, rels, uuid)
+    subjects <- children(terms, rels, uuid, langs[1], returnIds = FALSE)
+  } else if(type_level == "path"){
+    uuids <- ancestry(terms, rels, uuid, langs[1], origin)
+    subjects <- ancestry(terms, rels, uuid, langs[1], origin, returnIds = FALSE)
+  }
+  ids <- seq_len(length(subject))
+  app_id <- rep_len(id, length(subject))
+  table <- data.frame(id=ids, uuid=uuids, subject=subjects, type_value=type_value, app_id)
+  table
+}
+#tb<-add_app("smt", "icon","be7331b8-7759-11e4-adb6-57ce06b062da", "uuid", "tree")
+
+delete_app <- function(app_id){
+  subject_apps<<-subject_apps[!subject_apps$id == app_id,]
   saveRDS(subject_apps, file="data/subject_apps.rds")
-  subject_list <- tree(uuid, lang, unlist=FALSE)
-  subject_list <- unlist(subject_list)
+}
+
+modify_app <- function(app_id, name="", icon="", subject="", type_value="", type_level="", langs="", uuid_column="", root_url="", csv_url=""){
   
-                         
 }
 
 #' Ontologies helps you browse your ontologies
