@@ -29,7 +29,11 @@
       function tree1(term_id, lang, description, language, relation_name, source){
         //console.log(term_id);
         //$('#jstree').html("");
-
+       /*
+        var request = ocpu.rpc("set_origin",{'uuid': term_id }, function(output){
+                      //console.log(output);
+                  });
+*/
         $('.results').html('<div class="panel panel-info" id="panelid"><div class="panel-heading">Select one or more terms</div><div class="panel-body" id="event_result"></div></div>');
         if($('#ontology')){
             $('#ontology').remove();
@@ -247,54 +251,36 @@
                     )
                   );
                   
-                  var request = ocpu.rpc("smp_api",{'term': id}, function(output){
-                    //console.log(output['x_med']);
-                    var xmed = output['x_med'][0];
-                    //console.log(xmed);
-                    if(xmed != undefined && xmed != 'NULL'){
+                  var request = ocpu.rpc("load_apps",{'uuid': id, 'lang': lang, 'origin': origin}, function(output){
+                      //console.log(output);
+                      
                       $('#event_result').append(
-                        $('<div class="smp">').append(
+                        $('<div class="apps">').append(
                             $('<img>').attr({
                                           'class': 'img_apps_first',
                                           'src': 'icons/apps.png',
                                           'data-toggle': 'tooltip',
                                           'data-placement': 'left',
-                                          'title': 'Sapiens Mapping Project'
-                                          }),
-                            $('<a>').attr({
-                                  'target': '_blank',
-                                  'href': 'http://sliced.ro/smp/nav2d.php?p='+xmed+'&a=0#0.385/20.738/-6.675',
-                                  'data-toggle': 'tooltip',
-                                  'data-placement': 'bottom',
-                                  'title': 'Axial 2DNavigator'
-                                  }).append(
-                                  $('<img>').attr({'class': 'img_apps', 'src': 'icons/axial.png'})
-                                  ),
-                            $('<a>').attr({
-                                  'target': '_blank',
-                                  'href': 'http://sliced.ro/smp/nav2d.php?h=1#0.265/288.27/17.7',
-                                  'data-toggle': 'tooltip',
-                                  'data-placement': 'bottom',
-                                  'title': 'Sagittal 2DNavigator'
-                                  }).append(
-                                  $('<img>').attr({'class': 'img_apps', 'src': 'icons/sagittal.png'})
-                                  ),
-                            $('<a>').attr({
-                                  'target': '_blank',
-                                  'href': 'http://sliced.ro/smp/nav2d.php?h=2#0.265/173.27/17.7',
-                                  'data-toggle': 'tooltip',
-                                  'data-placement': 'bottom',
-                                  'title': 'Frontal 2DNavigator'
-                                  }).append(
-                                  $('<img>').attr({'class': 'img_apps', 'src': 'icons/frontal.png'})
-                                  )
+                                          'title': 'Apps'
+                                          })
                         )
                       );
-                    }
-
-
+                      for(i in output){
+                        console.log(output[i]);
+                        console.log(output[i]["root_url"]);
+                        $('.apps').append(
+                            $('<a>').attr({
+                                  'target': '_blank',
+                                  'href': output[i]["root_url"][0],
+                                  'data-toggle': 'tooltip',
+                                  'data-placement': 'bottom',
+                                  'title': output[i]["name"][0]
+                                  }).append(
+                                  $('<img>').attr({'class': 'img_apps', 'src': output[i]["icon"][0]})
+                                  )
+                        );
+                      }
                   });
-
                    //if R returns an error, alert the error message
                     request.fail(function(){
                       alert("Server error: " + request.responseText);
