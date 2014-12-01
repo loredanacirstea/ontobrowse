@@ -17,9 +17,7 @@ s <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sli
 smp <- read.csv(text = s)
 subject_apps <- readRDS("data/subject_apps.rds")
 onto_list <- readRDS("data/onto_list.rds")
-
-app_list = list()
-origin = ""
+app_list <- readRDS("data/app_list.rds")
 
 ancestry <- function(terms, rels, term, lang, origin, returnIds = TRUE) {
   path = term
@@ -143,9 +141,6 @@ uuid_dash <- function(uuid){
                    substr(uuid, 21, 32)), collapse="")
   uuidn
 }
-set_origin <- function(uuid){
-  origin <- uuid
-}
 load_apps <- function(uuid, lang, origin){
   list <- list()
   path <- ancestry(terms, rels, uuid, lang, origin)
@@ -158,6 +153,7 @@ load_apps <- function(uuid, lang, origin){
       if(length(app_list[[name]]) == 0){
         temp <- getURL(as.character(apps[row,"csv_url"]))
         app_list[[name]] <- read.csv(text = temp)
+        saveRDS(app_list,"data/app_list.rds")
       }
       data <- app_list[[name]]
       url <- as.character(apps[row,"root_url"])
@@ -198,7 +194,13 @@ load_apps <- function(uuid, lang, origin){
   }
   list
 }
-
+load_app_list <- function(subject_apps){
+  for(row in row.names(subject_apps)){
+    temp <- getURL(as.character(subject_apps[row,"csv_url"]))
+    app_list[[as.character(subject_apps[row,"id"])]] <- read.csv(text = temp)
+  }
+  saveRDS(app_list,"data/app_list.rds")
+}
 add_app <- function(name, icon, subject, type_value, type_level, langs, uuid_column, root_url, csv_url, origin=""){
   if(type_value == "uuid"){
     uuid <- subject
@@ -210,7 +212,7 @@ add_app <- function(name, icon, subject, type_value, type_level, langs, uuid_col
   row <- data.frame(id, name, icon, uuid, subject, type_value, type_level, paste(langs, collapse=","), subject_column, root_url, csv_url)
   names(row) <- names(subject_apps)
   subject_apps <- rbind(subject_apps, row)
-  #saveRDS(subject_apps, file="data/subject_apps.rds")
+  saveRDS(subject_apps, file="data/subject_apps.rds")
   if(type_level == "tree"){
     subject_list <- tree(uuid, langs[1], unlist=FALSE)
     subject_list <- unlist(subject_list)
