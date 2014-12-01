@@ -144,7 +144,7 @@ uuid_dash <- function(uuid){
   uuidn
 }
 set_origin <- function(uuid){
-  origin <<- uuid
+  origin <- uuid
 }
 load_apps <- function(uuid, lang){
   list <- list()
@@ -157,7 +157,7 @@ load_apps <- function(uuid, lang){
       name <- as.character(apps[row,"name"])
       if(length(app_list[[name]]) == 0){
         temp <- getURL(as.character(apps[row,"csv_url"]))
-        app_list[[name]] <<- read.csv(text = temp)
+        app_list[[name]] <- read.csv(text = temp)
       }
       data <- app_list[[name]]
       url <- as.character(apps[row,"root_url"])
@@ -209,7 +209,7 @@ add_app <- function(name, icon, subject, type_value, type_level, langs, uuid_col
   id <- as.integer(subject_apps[length(row.names(subject_apps)),"id"])+1
   row <- data.frame(id, name, icon, uuid, subject, type_value, type_level, paste(langs, collapse=","), subject_column, root_url, csv_url)
   names(row) <- names(subject_apps)
-  subject_apps <<- rbind(subject_apps, row)
+  subject_apps <- rbind(subject_apps, row)
   #saveRDS(subject_apps, file="data/subject_apps.rds")
   if(type_level == "tree"){
     subject_list <- tree(uuid, langs[1], unlist=FALSE)
@@ -232,7 +232,7 @@ add_app <- function(name, icon, subject, type_value, type_level, langs, uuid_col
 #tb<-add_app("smt", "icon","be7331b8-7759-11e4-adb6-57ce06b062da", "uuid", "tree")
 
 delete_app <- function(app_id){
-  subject_apps<<-subject_apps[!subject_apps$id == app_id,]
+  subject_apps<-subject_apps[!subject_apps$id == app_id,]
   saveRDS(subject_apps, file="data/subject_apps.rds")
 }
 
