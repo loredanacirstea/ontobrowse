@@ -17,7 +17,9 @@ s <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sli
 smp <- read.csv(text = s)
 subject_apps <- readRDS("data/subject_apps.rds")
 onto_list <- readRDS("data/onto_list.rds")
+
 app_list = list()
+origin = ""
 
 ancestry <- function(terms, rels, term, lang, origin, returnIds = TRUE) {
   path = term
@@ -141,11 +143,16 @@ uuid_dash <- function(uuid){
                    substr(uuid, 21, 32)), collapse="")
   uuidn
 }
-
+set_origin <- function(uuid){
+  origin <<- uuid
+}
 load_apps <- function(uuid, lang){
   list <- list()
-  if(length(row.names(subject_apps[subject_apps$uuid == uuid & grepl(lang, subject_apps$langs,fixed=TRUE),])) > 0){
-    apps <- subject_apps[subject_apps$subject == uuid & grepl(lang, subject_apps$langs,fixed=TRUE),]
+  path <- ancestry(terms, rels, uuid, lang, origin)
+  if(length(row.names(subject_apps[subject_apps$uuid %in% path & 
+                     (grepl(lang, subject_apps$langs,fixed=TRUE) |  subject_apps$langs == "*"),])) > 0){
+    apps <- subject_apps[subject_apps$subject %in% path & 
+                           (grepl(lang, subject_apps$langs,fixed=TRUE) |  subject_apps$langs == "*"),]
     for(row in row.names(apps)){
       name <- as.character(apps[row,"name"])
       if(length(app_list[[name]]) == 0){
