@@ -151,9 +151,7 @@ load_apps <- function(uuid, lang, origin){
     for(row in row.names(apps)){
       name <- as.character(apps[row,"name"])
       if(length(app_list[[name]]) == 0){
-        temp <- getURL(as.character(apps[row,"csv_url"]))
-        app_list[[name]] <- read.csv(text = temp)
-        saveRDS(app_list,"data/app_list.rds")
+        load_apps_list(subject_apps)
       }
       data <- app_list[[name]]
       url <- as.character(apps[row,"root_url"])
