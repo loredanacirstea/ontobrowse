@@ -150,10 +150,11 @@ load_apps <- function(uuid, lang, origin){
                            (grepl(lang, subject_apps$langs,fixed=TRUE) |  subject_apps$langs == "*"),]
     for(row in row.names(apps)){
       name <- as.character(apps[row,"name"])
-      if(length(app_list[[name]]) == 0){
+      id <- as.character(apps[row,"id"])
+      if(length(app_list[[id]]) == 0){
         load_app_list(subject_apps)
       }
-      data <- app_list[[name]]
+      data <- app_list[[id]]
       url <- as.character(apps[row,"root_url"])
       param_ind <- gregexpr("(<)([^>]+)(>)", url)
       start_ind <- param_ind[[1]]
@@ -175,6 +176,7 @@ load_apps <- function(uuid, lang, origin){
         else{
           params[param] <- as.character(data[data$uuid == uuid, param])
           #url <- sub(paste(c("<",param,">"),collapse=""), params[param], url, fixed=TRUE)
+          cat(paste(c(param,":",params[param]),collapse=""))
           if(!params[param] %in% c("NULL","NA")){
             urln <- paste(c(urln, params[param], collapse=""))
           }
