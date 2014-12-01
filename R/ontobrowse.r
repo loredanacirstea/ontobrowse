@@ -151,7 +151,7 @@ load_apps <- function(uuid, lang, origin){
     for(row in row.names(apps)){
       name <- as.character(apps[row,"name"])
       if(length(app_list[[name]]) == 0){
-        load_apps_list(subject_apps)
+        load_app_list(subject_apps)
       }
       data <- app_list[[name]]
       url <- as.character(apps[row,"root_url"])
