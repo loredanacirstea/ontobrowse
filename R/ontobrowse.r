@@ -8,13 +8,13 @@
 #"https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv"
 #library(uuid)
 
-library(RCurl)
-x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
-terms <- read.csv(text = x)
-y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
-rels <- read.csv(text = y)
-s <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv")
-smp <- read.csv(text = s)
+# library(RCurl)
+# x <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term.csv")
+# terms <- read.csv(text = x)
+# y <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/term_relation.csv")
+# rels <- read.csv(text = y)
+# s <- getURL("https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv")
+# smp <- read.csv(text = s)
 subject_apps <- readRDS("data/subject_apps.rds")
 onto_list <- readRDS("data/onto_list.rds")
 app_list <- readRDS("data/app_list.rds")
@@ -176,8 +176,10 @@ load_apps <- function(uuid, lang, origin){
         else{
           params[param] <- as.character(data[data$uuid == uuid, param])
           #url <- sub(paste(c("<",param,">"),collapse=""), params[param], url, fixed=TRUE)
-          if(!params[param] %in% c("NULL","NA")){
-            urln <- paste(c(urln, params[param], collapse=""))
+          if(length(params[param]) != 0){
+            if(!params[param] %in% c("NULL","NA")){
+              urln <- paste(c(urln, params[param], collapse=""))
+            }
           }
         }
         ini = start_ind[i]+length_ind[i]

@@ -252,8 +252,8 @@
                   );
                   
                   var request = ocpu.rpc("load_apps",{'uuid': id, 'lang': lang, 'origin': origin}, function(output){
-                      //console.log(output);
-                      
+                      console.log(output);
+                    if(output.length != 0){  
                       $('#event_result').append(
                         $('<div class="apps">').append(
                             $('<img>').attr({
@@ -266,8 +266,6 @@
                         )
                       );
                       for(i in output){
-                        console.log(output[i]);
-                        console.log(output[i]["root_url"]);
                         $('.apps').append(
                             $('<a>').attr({
                                   'target': '_blank',
@@ -280,6 +278,7 @@
                                   )
                         );
                       }
+                    }
                   });
                    //if R returns an error, alert the error message
                     request.fail(function(){
