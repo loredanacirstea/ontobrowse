@@ -181,6 +181,7 @@ load_apps <- function(uuid, lang, origin){
               urln <- paste(c(urln, params[param], collapse=""))
             }
           }
+          else return(list())
         }
         ini = start_ind[i]+length_ind[i]
       }
@@ -202,15 +203,9 @@ load_app_list <- function(subject_apps){
   }
   saveRDS(app_list,"data/app_list.rds")
 }
-add_app <- function(name, icon, subject, type_value, type_level, langs, uuid_column, root_url, csv_url, origin=""){
-  if(type_value == "uuid"){
-    uuid <- subject
-  }
-  else {
-    uuid <- get_uuid(subject, value_type)
-  }
+add_app <- function(name, icon, uuid, type_level, langs, root_url, csv_url, origin=""){
   id <- as.integer(subject_apps[length(row.names(subject_apps)),"id"])+1
-  row <- data.frame(id, name, icon, uuid, subject, type_value, type_level, paste(langs, collapse=","), subject_column, root_url, csv_url)
+  row <- data.frame(id, name, icon, uuid, type_level, paste(langs, collapse=","), root_url, csv_url)
   names(row) <- names(subject_apps)
   subject_apps <- rbind(subject_apps, row)
   saveRDS(subject_apps, file="data/subject_apps.rds")
@@ -227,19 +222,21 @@ add_app <- function(name, icon, subject, type_value, type_level, langs, uuid_col
     uuids <- ancestry(terms, rels, uuid, langs[1], origin)
     subjects <- ancestry(terms, rels, uuid, langs[1], origin, returnIds = FALSE)
   }
-  ids <- seq_len(length(subject))
-  app_id <- rep_len(id, length(subject))
-  table <- data.frame(id=ids, uuid=uuids, subject=subjects, type_value=type_value, app_id)
-  table
+  if(type_level != "node"){
+    ids <- seq_len(length(subjects))
+    app_id <- rep_len(id, length(subjects))
+    table <- data.frame(id=ids, uuid=uuids, subject=subjects, app_id)
+    table
+  }
 }
-#tb<-add_app("smt", "icon","be7331b8-7759-11e4-adb6-57ce06b062da", "uuid", "tree")
+#tb<-add_app("smt", "icon","be7331b8-7759-11e4-adb6-57ce06b062da", "tree", "en", "root", "csv")
 
 delete_app <- function(app_id){
   subject_apps<-subject_apps[!subject_apps$id == app_id,]
   saveRDS(subject_apps, file="data/subject_apps.rds")
 }
 
-modify_app <- function(app_id, name="", icon="", subject="", type_value="", type_level="", langs="", uuid_column="", root_url="", csv_url=""){
+modify_app <- function(app_id, name="", icon="", uuid="", type_level="", langs="", root_url="", csv_url=""){
   
 }
 
