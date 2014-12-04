@@ -146,7 +146,7 @@ load_apps <- function(uuid, lang, origin){
   path <- ancestry(terms, rels, uuid, lang, origin)
   if(length(row.names(subject_apps[subject_apps$uuid %in% path & 
                      (grepl(lang, subject_apps$langs,fixed=TRUE) |  subject_apps$langs == "*"),])) > 0){
-    apps <- subject_apps[subject_apps$subject %in% path & 
+    apps <- subject_apps[subject_apps$uuid %in% path & 
                            (grepl(lang, subject_apps$langs,fixed=TRUE) |  subject_apps$langs == "*"),]
     for(row in row.names(apps)){
       name <- as.character(apps[row,"name"])
@@ -174,12 +174,10 @@ load_apps <- function(uuid, lang, origin){
           urln <- paste(c(urln, lang, collapse=""))
         }
         else{
-          params[param] <- as.character(data[data$uuid == uuid, param])
+          params[param] <- as.character(data[data$uuid == uuid, param])[1]
           #url <- sub(paste(c("<",param,">"),collapse=""), params[param], url, fixed=TRUE)
-          if(length(params[param]) != 0){
-            if(!params[param] %in% c("NULL","NA")){
+          if(length(params[param]) != 0 && !params[param] %in% c("NULL","NA", NA, NULL)){
               urln <- paste(c(urln, params[param], collapse=""))
-            }
           }
           else return(list())
         }
